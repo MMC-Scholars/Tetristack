@@ -82,7 +82,13 @@
   <ItemGroup>
     <Compile Include="Assets\CBase\CBaseEntity.cs" />
     <Compile Include="Assets\CBase\CBaseEntity_Flags.cs" />
+    <Compile Include="Assets\CBase\CDamageInfo.cs" />
+    <Compile Include="Assets\CBase\Globals.cs" />
+    <Compile Include="Assets\CBase\CEntityFilter.cs" />
+    <Compile Include="Assets\NMath\NClamps.cs" />
+    <Compile Include="Assets\NMath\NRand.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
