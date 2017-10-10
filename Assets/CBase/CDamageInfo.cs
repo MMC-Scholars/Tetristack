@@ -5,7 +5,7 @@
 /**
  * @author Michael Trunk
  * @startdate	29/9/2017
- * @enddate		29/9/2017
+ * @enddate		3/10/2017
  */
 
 using System;
@@ -35,7 +35,7 @@ namespace Assets {
 		CBaseEntity	m_pAttacker;
 		CBaseEntity m_pWeapon;
 
-		EDamageType m_eDamageType;
+		EDamageType m_eDamageType = EDamageType.DMG_GENERIC;
 
 		Vector3     m_vDamagePosition;
 		Vector3     m_vForce;
@@ -46,9 +46,65 @@ namespace Assets {
 			m_iDamage = m_iDamage > m_iMaxDamage ? m_iMaxDamage : m_iDamage;
 		}
 
+		//Privatise default constructor
+		private CDamageInfo() { }
+
+		/**
+		 * Public constructors
+		 */ 
+		public CDamageInfo(int iDamage, CBaseEntity pAttacker, Vector3 vDmgPosition) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+		}
+		public CDamageInfo(int iDamage, EDamageType eType, CBaseEntity pAttacker, Vector3 vDmgPosition) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_eDamageType = eType;
+		}
+		public CDamageInfo(int iDamage, CBaseEntity pAttacker, Vector3 vDmgPosition, Vector3 vForce) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_vForce = vForce;
+		}
+		public CDamageInfo(int iDamage,EDamageType eType,CBaseEntity pAttacker,Vector3 vDmgPosition,Vector3 vForce) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_vForce = vForce;
+			m_eDamageType = eType;
+		}
+		public CDamageInfo(int iDamage, int iMinDmg, int iMaxDmg, CBaseEntity pAttacker, Vector3 vDmgPosition) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_iMinDamage = iMinDmg;
+			m_iMaxDamage = iMaxDmg;
+		}
+		public CDamageInfo(int iDamage, int iMinDmg, int iMaxDmg, CBaseEntity pAttacker, Vector3 vDmgPosition, Vector3 vForce) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_vForce = vForce;
+			m_iMinDamage = iMinDmg;
+			m_iMaxDamage = iMaxDmg;
+		}
+		public CDamageInfo(int iDamage,int iMinDmg,int iMaxDmg, EDamageType eType, CBaseEntity pAttacker,Vector3 vDmgPosition,Vector3 vForce) {
+			m_iDamage = m_iBaseDamage = iDamage;
+			m_pAttacker = pAttacker;
+			m_vDamagePosition = vDmgPosition;
+			m_vForce = vForce;
+			m_iMinDamage = iMinDmg;
+			m_iMaxDamage = iMaxDmg;
+			m_eDamageType = eType;
+		}
+
+
 		/**
 		 * Public accessors
-		 */ 
+		 */
 		public int			GetBaseDamage()			{ return m_iBaseDamage; }
 		public int			GetDamage()				{ return m_iDamage; }
 		public void			SetDamage(int iDamage)	{ m_iDamage = iDamage; ClampDamage(); }

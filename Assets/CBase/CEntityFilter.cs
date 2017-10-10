@@ -5,7 +5,7 @@
 /**
  * @author Michael Trunk
  * @startdate	29/9/2017
- * @enddate		29/9/2017
+ * @enddate		2/10/2017
  */ 
 
 using System;
@@ -71,6 +71,53 @@ namespace Assets {
 				break;
 			}
 
+			return result;
+		}
+
+		/****************************************************************************************
+		 * Public helper functions
+		 ***************************************************************************************/
+		bool				FilterEntity(CBaseEntity pEnt) {
+			bool bResult = false;
+			if (pEnt != null) {
+				switch(m_eFilterMode) {
+				case EFilterMode.Normal:
+					bResult = FilterEntityNorm(pEnt);
+					break;
+				case EFilterMode.Inverted:
+					bResult = !FilterEntityNorm(pEnt);
+					break;
+				case EFilterMode.Random:
+					bResult = NRand.randBool(m_flRandomChance);
+					break;
+				case EFilterMode.AllowAll:
+					bResult = true;
+					break;
+				case EFilterMode.BlockAll:
+					bResult = false;
+					break;
+				}
+			}
+			return bResult;
+		}
+
+		//@requires input is non-null
+		List<CBaseEntity>	FilterEntityList(List<CBaseEntity> pEntList) {
+			List<CBaseEntity> result;
+
+			if (m_eFilterMode == EFilterMode.BlockAll) {
+				result = new List<CBaseEntity>(0);
+			} else if (m_eFilterMode == EFilterMode.AllowAll) {
+				result = new List<CBaseEntity>(pEntList);
+			} else {
+				result = new List<CBaseEntity>(pEntList.Count());
+				for (int i = 0; i < pEntList.Count(); i++) {
+					if (FilterEntity(pEntList.ElementAt(i))) {
+						result.Add(pEntList.ElementAt(i));
+					}
+				}
+			}
+			
 			return result;
 		}
 	};

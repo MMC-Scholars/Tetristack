@@ -5,7 +5,7 @@
 /**
  * @author Michael Trunk
  * @startdate	29/9/2017
- * @enddate		29/9/2017
+ * @enddate		3/10/2017
  */
 
 using System.Collections;
@@ -32,11 +32,31 @@ namespace Assets {
 		//This simple accessor will help us type less later on
 		public	GameObject	obj() { return gameObject; }
 
+		//public	CBaseEntity clone()
+
 		/****************************************************************************************
 		 * Private variables for teleporting to original spawn location/angle
 		 ***************************************************************************************/
 		private Vector3     m_vSpawnLocation;
 		private Quaternion  m_qSpawnAngle;
+
+		/****************************************************************************************
+		 * Teleport / positition functionality
+		 ***************************************************************************************/
+		public	void	TeleportTo(Vector3 vPosition) {
+			obj().transform.SetPositionAndRotation(vPosition, obj().transform.rotation);
+		}
+		public	Vector3	GetPosition() { return obj().transform.position; }
+
+		/****************************************************************************************
+		 * Visibility functionality
+		 ***************************************************************************************/
+		public	bool	CanSee(CBaseEntity pEnt) {
+			return Physics.Raycast(GetPosition(), pEnt.GetPosition() - GetPosition());
+		}
+		public	bool	CanSee(Vector3 vPos) {
+			return Physics.Raycast(GetPosition(), vPos - GetPosition());
+		}
 
 		/****************************************************************************************
 		 * Generic "Use" functionality
@@ -55,6 +75,7 @@ namespace Assets {
 		private bool    m_bAlive = true;
 		private int		m_iHealth;
 		public  int		m_iSpawnHealth = 100;
+
 		public	int		GetHealth() { return m_iHealth; }
 		public	void	SetHealth(int iHealth) { m_iHealth = iHealth; CalculateDeath(); }
 		private	void	CalculateDeath() {
@@ -69,16 +90,24 @@ namespace Assets {
 				if (IsDead()) {
 					OnKilled(info);
 					info.GetAttacker().OnKilledOther(info);
+				} else {
+					OnTakeDamageAlive(info);
 				}
 			}
 		}
 
-		public	void	OnTakeDamage(CDamageInfo info) { } //Called after damage is applied
+		public	void	Kill() {
+			CDamageInfo info = new CDamageInfo(m_iHealth, this, GetPosition());
+			TraceAttack(info);
+		}
+
+		public	void	OnTakeDamage(CDamageInfo info) { } //Called after damage is subtracted from health
+		public	void	OnTakeDamageAlive(CDamageInfo info) { } //called after OnTakeDamage(..), only if still alive
 		public	void	OnKilled(CDamageInfo info) { CalculateNextRespawnTime(); obj().SetActive(false); }
 		public	void	OnKilledOther(CDamageInfo info) { }
 
-		public	bool	IsAlive() { return m_bAlive; }
-		public	bool	IsDead() { return !IsAlive(); }
+		public	bool	IsAlive()	{ return m_bAlive; }
+		public	bool	IsDead()	{ return !IsAlive(); }
 
 		/****************************************************************************************
 		 * Respawn functionality resets values to defaults
@@ -107,7 +136,7 @@ namespace Assets {
 		 ***************************************************************************************/
 
 		// Use this for initialization
-		void			Start() {
+		public virtual void		Start() {
 			//Remember default spawn values
 			m_iSpawnFlags		= m_iFlags;
 			m_vSpawnLocation	= obj().transform.position;
@@ -116,7 +145,7 @@ namespace Assets {
 		}
 
 		// Update is called once per frame
-		void			Update() {
+		void					Update() {
 			//Check for next respawn
 			if (g.curtime > m_flNextRespawnTime)
 				Respawn();

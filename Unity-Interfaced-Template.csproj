@@ -83,8 +83,11 @@
     <Compile Include="Assets\CBase\CBaseEntity.cs" />
     <Compile Include="Assets\CBase\CBaseEntity_Flags.cs" />
     <Compile Include="Assets\CBase\CDamageInfo.cs" />
+    <Compile Include="Assets\CBase\CSequencer.cs" />
     <Compile Include="Assets\CBase\Globals.cs" />
     <Compile Include="Assets\CBase\CEntityFilter.cs" />
+    <Compile Include="Assets\NHeightmap\CHeightmap.cs" />
+    <Compile Include="Assets\NHeightmap\CHeightmapGenerator.cs" />
     <Compile Include="Assets\NMath\NClamps.cs" />
     <Compile Include="Assets\NMath\NRand.cs" />
   </ItemGroup>
