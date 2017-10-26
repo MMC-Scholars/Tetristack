@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="Assets\CBase\CBaseEntity.cs" />
     <Compile Include="Assets\CBase\CBaseEntity_Flags.cs" />
+    <Compile Include="Assets\CBase\CButton.cs" />
     <Compile Include="Assets\CBase\CDamageInfo.cs" />
     <Compile Include="Assets\CBase\CSequencer.cs" />
     <Compile Include="Assets\CBase\Globals.cs" />

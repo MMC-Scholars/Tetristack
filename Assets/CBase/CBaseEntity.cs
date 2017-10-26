@@ -61,13 +61,13 @@ namespace Assets {
 		/****************************************************************************************
 		 * Generic "Use" functionality
 		 ***************************************************************************************/
-		public	bool	IsUseable() { return !HasFlag(FL_NO_USE); }
-		public	void	Use(CBaseEntity pUser) {
+		public	bool			IsUseable() { return !HasFlag(FL_IGNORE_USE); }
+		public	void			Use(CBaseEntity pUser) {
 			if (!IsUseable()) {
 				OnUsed(pUser);
 			}
 		}
-		public	void	OnUsed(CBaseEntity pUser) { }
+		public	virtual void	OnUsed(CBaseEntity pUser) { }
 
 		/****************************************************************************************
 		 * Health functionality
@@ -145,7 +145,7 @@ namespace Assets {
 		}
 
 		// Update is called once per frame
-		void					Update() {
+		public virtual void		Update() {
 			//Check for next respawn
 			if (g.curtime > m_flNextRespawnTime)
 				Respawn();

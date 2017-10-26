@@ -40,6 +40,10 @@ namespace Assets {
 				}
 			}
 		}
+
+		//The "Max" is not a literal value, but a proportion
+		// For float, proportion is 0.0-1.0 of height
+		// For int, proportion is GetMaxAsInt() / MAX_INT
 		public	int 	GetMaxAsInt() { return m_aaValues[m_iMaxY][m_iMaxX]; }
 		public	float 	GetMaxAsFloat() { return (float) (1.0 * GetMaxAsInt() / int.MaxValue); }
 	}
