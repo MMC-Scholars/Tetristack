@@ -17,18 +17,50 @@ using UnityEngine;
 
 namespace Assets {
 	abstract partial class g {
-		public static float		curtime = 0.1f,
-								prevtime = 0.0f,
-								frametime = 0.1f;
+		public	static float	curtime,
+								prevtime,
+								frametime;
 
 		private static Stopwatch timer;
 
-		public static void init() {
-			timer = new Stopwatch();
-			timer.Start();
-			curtime = (float) (1.0 * timer.ElapsedMilliseconds / 1000);
+		private static bool g_bReinitialize = true;
+
+
+		/**
+		 * Marks that the game or editor should re-initialize globals
+		 * on the next Start()
+		 * This must be done to ensure that some globals are set before
+		 *		all objects are loaded.
+		 * Only call this on the last frame via OnApplicationQuit()
+		 *  -All CBaseEntity already do this
+		 */
+		public static void MarkForReinitializationOnNextStart() {
+			g_bReinitialize = true;
 		}
 
+		public static bool CheckForReinitializationOnStart() {
+			bool bReInitialized = false;
+			if (curtime < 0) {
+				init();
+				bReInitialized = true;
+			}
+			return bReInitialized;
+		}
+
+		public static void init() {
+			g_bReinitialize = false;
+
+			curtime = 0.03f;
+			prevtime = 0.0f;
+			frametime = 0.03f;
+
+			timer = new Stopwatch();
+			timer.Start();
+		}
+
+		/**
+		 * Called by CGameRules to update global times
+		 */ 
 		public static void updateGlobals() {
 			prevtime = curtime;
 			curtime = (float) (1.0 * timer.ElapsedMilliseconds / 1000);

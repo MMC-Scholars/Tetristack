@@ -85,6 +85,8 @@
     <Compile Include="Assets\CBase\CButton.cs" />
     <Compile Include="Assets\CBase\CDamageInfo.cs" />
     <Compile Include="Assets\CBase\CSequencer.cs" />
+    <Compile Include="Assets\CBase\CGameRules.cs" />
+    <Compile Include="Assets\CBase\CTowerBuilderRules.cs" />
     <Compile Include="Assets\CBase\Globals.cs" />
     <Compile Include="Assets\CBase\CEntityFilter.cs" />
     <Compile Include="Assets\NHeightmap\CHeightmap.cs" />

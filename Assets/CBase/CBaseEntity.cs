@@ -27,12 +27,15 @@ namespace Assets {
 	 * CBaseEntity class is base type for all of MMC's objects.
 	 ***************************************************************************************/
 	public partial class CBaseEntity : MonoBehaviour {
-		
 
 		//This simple accessor will help us type less later on
 		public	GameObject	obj() { return gameObject; }
 
-		//public	CBaseEntity clone()
+		/****************************************************************************************
+		 * Global entity list functionality
+		 ***************************************************************************************/
+		static public   List<CBaseEntity>   g_aEntList = new List<CBaseEntity>();
+
 
 		/****************************************************************************************
 		 * Private variables for teleporting to original spawn location/angle
@@ -137,6 +140,8 @@ namespace Assets {
 
 		// Use this for initialization
 		public virtual void		Start() {
+			g.CheckForReinitializationOnStart();
+
 			//Remember default spawn values
 			m_iSpawnFlags		= m_iFlags;
 			m_vSpawnLocation	= obj().transform.position;
@@ -149,6 +154,13 @@ namespace Assets {
 			//Check for next respawn
 			if (g.curtime > m_flNextRespawnTime)
 				Respawn();
+		}
+
+		/**
+		 * Marks for re-initialization of globals
+		 */ 
+		public virtual void		OnApplicationQuit() {
+			g.MarkForReinitializationOnNextStart();
 		}
 	}
 }

@@ -18,7 +18,6 @@ namespace Assets {
 	/**
 	 * Definitions for the bitflags used by CBaseEntity. They are defined separately here
 	 * for the sake of organization.
-	 * 
 	 */ 
 	public partial class CBaseEntity : MonoBehaviour {
 
@@ -32,7 +31,7 @@ namespace Assets {
 		/**
 		 * The flags we originally spawned with
 		 */
-		private int         m_iSpawnFlags = 0;
+		protected int         m_iSpawnFlags = 0;
 
 		/**
 		 * These are the bit flags
