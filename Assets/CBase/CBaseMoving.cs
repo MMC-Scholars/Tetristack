@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets
 {
-    class CDoor : CBaseEntity
+    class CBaseMoving : CBaseEntity
     {
 
 		public bool bOpen;
