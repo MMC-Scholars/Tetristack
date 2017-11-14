@@ -5,7 +5,6 @@
 /**
  * @author Michael Trunk
  * @startdate	6/11/2017
- * @enddate		7/11/2017
  */
 
 using System;
@@ -16,7 +15,13 @@ using System.Text;
 namespace Assets {
 	class CTowerBuilderRules : CGameRules {
 
-		public CHeightmapGenerator m_pMeasuringStick;
+		//LINK THESE TO WORLD OBJECTS
+		public CHeightmapGenerator	m_pMeasuringStick;
+		public CBlockSequencer      m_pBlockSequencer;
+
+
+		//High score interface
+		CScoreTable scores = new CScoreTable();
 
 		/****************************************************************************************
 		 * Checks if we're currently in a measuring sequence
@@ -26,8 +31,9 @@ namespace Assets {
 		/****************************************************************************************
 		 * Marks for the beginning of a new measuring sequence
 		 ***************************************************************************************/
+		float m_flNextSequenceEnd;
 		static float MEASURE_DURATION = 3.0f;
-		public void SequenceBegin() { m_pMeasuringStick.SequenceBegin(MEASURE_DURATION); }
+		public void SequenceBegin() { m_flNextSequenceEnd = g.curtime + MEASURE_DURATION; m_pMeasuringStick.SequenceBegin(MEASURE_DURATION); }
 
 		/****************************************************************************************
 		 * Calls for a re-measuring of the max-height from the heightmap generator, and
@@ -42,10 +48,26 @@ namespace Assets {
 		 * Updates visual displays of high scores
 		 ***************************************************************************************/
 		public void UpdateDisplays() {
-			if (SequenceActive()) {
-				float flMeasure = m_pMeasuringStick.SequenceMeasure();
+			bool bDidMeasure = false;
+			float flMeasure;
+
+			if(g.curtime > m_flNextSequenceEnd) {
+				m_flNextSequenceEnd = float.MaxValue;
+				OnNewHighScore();
+				bDidMeasure = true;
+			}
+			else if (SequenceActive()) {
+				flMeasure = m_pMeasuringStick.SequenceMeasure();
+				bDidMeasure = true;
+			}
+			if (bDidMeasure) {
 				//TODO link to displays!
 			}
+		}
+
+		//Called whenever a new high score is measured
+		public void OnNewHighScore() {
+
 		}
 
 		/****************************************************************************************

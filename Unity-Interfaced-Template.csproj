@@ -88,6 +88,7 @@
     <Compile Include="Assets\CBase\CSequencer.cs" />
     <Compile Include="Assets\CBase\CGameRules.cs" />
     <Compile Include="Assets\NTowerBuilder\CBaseBlock.cs" />
+    <Compile Include="Assets\NTowerBuilder\CScoreTable.cs" />
     <Compile Include="Assets\NTowerBuilder\CTowerBuilderRules.cs" />
     <Compile Include="Assets\CBase\Globals.cs" />
     <Compile Include="Assets\CBase\CEntityFilter.cs" />
