@@ -27,6 +27,8 @@ namespace Assets {
 		public	int         m_iFlags = 0;
 		public	int			GetFlags() { return m_iFlags; }
 		public	void		SetFlags(int iFlags) { m_iFlags = iFlags; }
+		public	void		AddFlags(int iFlags) { m_iFlags |= iFlags; }
+		public	void		RemoveFlags(int iFlags) { m_iFlags &= ~iFlags; }
 
 		/**
 		 * The flags we originally spawned with
@@ -36,10 +38,11 @@ namespace Assets {
 		/**
 		 * These are the bit flags
 		 */
-		public  static int  FL_INVINCIBLE       = 1 << 0,	//Clamp health to always be above one?
-							FL_NODAMAGE         = 1 << 1,	//Block all damage? (health stays at default value)
-							FL_TRIGGERIGNORE    = 1 << 2,	//Should MMC's triggers ignore this entity?
-							FL_IGNORE_USE       = 1 << 3;
+		public  static int  FL_INVINCIBLE			= 1 << 0,	//Clamp health to always be above one?
+							FL_NODAMAGE				= 1 << 1,	//Block all damage? (health stays at default value)
+							FL_TRIGGERIGNORE		= 1 << 2,	//Should MMC's triggers ignore this entity?
+							FL_IGNORE_USE			= 1 << 3,
+							FL_DESTROY_ON_RESPAWN	= 1 << 4;	//use this for instantiated copies that should be destroyed on restart round
 
 		/**
 		 * Use this to check if an object has a specific flag

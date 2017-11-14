@@ -18,8 +18,12 @@ namespace Assets {
 		 * This function is a shorthand for getting a CBaseEntity
 		 *		out of a GameObject .
 		 */ 
-		static CBaseEntity ToBaseEntity(GameObject obj) {
+		public static CBaseEntity ToBaseEntity(GameObject obj) {
 			return obj.GetComponent<CBaseEntity>();
+		}
+
+		public static bool HasBaseEntity(GameObject obj) {
+			return ToBaseEntity(obj) != null;
 		}
 	}
 
@@ -121,17 +125,21 @@ namespace Assets {
 		private	void	CalculateNextRespawnTime() { m_flNextRespawnTime = g.curtime + 10.0f; }
 
 		public	void	Respawn() {
-			m_flLastRespawnTime = g.curtime;
-			obj().SetActive(true);
+			if(HasFlag(FL_DESTROY_ON_RESPAWN)) {
+				Destroy(obj());
+			} else {
+				m_flLastRespawnTime = g.curtime;
+				obj().SetActive(true);
 
-			//reset position
-			obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
+				//reset position
+				obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
 
-			//reset bitflags
-			m_iFlags = m_iSpawnFlags;
+				//reset bitflags
+				m_iFlags = m_iSpawnFlags;
 
-			//reset health
-			m_iHealth = m_iSpawnHealth;
+				//reset health
+				m_iHealth = m_iSpawnHealth;
+			}
 		}
 
 		/****************************************************************************************
@@ -141,12 +149,17 @@ namespace Assets {
 		// Use this for initialization
 		public virtual void		Start() {
 			g.CheckForReinitializationOnStart();
+			g_aEntList.Add(this);
 
 			//Remember default spawn values
 			m_iSpawnFlags		= m_iFlags;
 			m_vSpawnLocation	= obj().transform.position;
 			m_qSpawnAngle		= obj().transform.rotation;
 			Respawn();
+		}
+
+		public virtual void		OnDestroy() {
+			g_aEntList.Remove(this);
 		}
 
 		// Update is called once per frame

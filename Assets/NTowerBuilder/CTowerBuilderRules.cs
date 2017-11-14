@@ -16,27 +16,36 @@ using System.Text;
 namespace Assets {
 	class CTowerBuilderRules : CGameRules {
 
-		private CHeightmapGenerator m_pMeasuringStick;
+		public CHeightmapGenerator m_pMeasuringStick;
+
+		/****************************************************************************************
+		 * Checks if we're currently in a measuring sequence
+		 ***************************************************************************************/
+		public bool SequenceActive() { return m_pMeasuringStick.SequenceActive(); }
+
+		/****************************************************************************************
+		 * Marks for the beginning of a new measuring sequence
+		 ***************************************************************************************/
+		static float MEASURE_DURATION = 3.0f;
+		public void SequenceBegin() { m_pMeasuringStick.SequenceBegin(MEASURE_DURATION); }
 
 		/****************************************************************************************
 		 * Calls for a re-measuring of the max-height from the heightmap generator, and
 		 *		returns the measured value.
+		 * Does NOT begin a measuring sequence and does not effect displays.
 		 ***************************************************************************************/
-		static float MEASURE_DURATION = 3.0f;
 		public float Remeasure() {
-			float flMeasure = 0.0f;
-			if (!m_pMeasuringStick.SequenceActive()) {
-				m_pMeasuringStick.SequenceBegin(MEASURE_DURATION);
-			}
-			flMeasure = m_pMeasuringStick.SequenceMeasure();
-			return flMeasure;
+			return m_pMeasuringStick.MeasureMaxWorldUnits();
 		}
 
 		/****************************************************************************************
 		 * Updates visual displays of high scores
 		 ***************************************************************************************/
 		public void UpdateDisplays() {
-			//TODO link to other objects & implement!
+			if (SequenceActive()) {
+				float flMeasure = m_pMeasuringStick.SequenceMeasure();
+				//TODO link to displays!
+			}
 		}
 
 		/****************************************************************************************
@@ -46,5 +55,12 @@ namespace Assets {
 			//TODO iterate through block entities, check their booleans to count them, and dispatch templated spawning of more of them 
 		}
 
+		/****************************************************************************************
+		 * Unity overrides
+		 ***************************************************************************************/
+		public override void Update() {
+			base.Update();
+			UpdateDisplays();
+		}
 	}
 }

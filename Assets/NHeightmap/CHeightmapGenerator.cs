@@ -30,6 +30,9 @@ namespace Assets {
 
 		static Vector3 s_vDown = new Vector3(0,0,-1);
 
+		//List of blocks contained in the bounds of this generator
+		List<CBaseBlock> m_aIntersecting = new List<CBaseBlock>();
+
 		//perform other position calculations
 		private void		init() {
 			Renderer bounds = obj().GetComponent<Renderer>();
@@ -133,11 +136,50 @@ namespace Assets {
 			return g.curtime > m_flSequenceStartTime && g.curtime < m_flSequenceEndTime;
 		}
 
+		/**
+		 * Calls collider functions to detect what other CBaseEntity are colliding with this
+		 */
+		private void ReloadIntersecting() {
+			float halfZ = m_flHeight / 2;
+			float halfY = m_vMaxXYZ.y - m_vMinXYZ.y;
+			float halfX = m_vMaxXYZ.x - m_vMinXYZ.x;
+			Vector3 center = (m_vMinXYZ + m_vMaxXYZ) / 2;
+
+			m_aIntersecting.Clear();
+
+			Collider[] colls = Physics.OverlapBox(center, new Vector3(halfX, halfY, halfZ));
+
+			foreach (Collider col in colls) {
+				CBaseBlock ent = g.ToBaseBlock(col.gameObject);
+				if (ent != null) {
+					m_aIntersecting.Add(ent);
+				}
+			}
+		}
+
+		private void OnCollisionEnter(Collision collision) {
+			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
+			if (blk != null) {
+				m_aIntersecting.Add(blk);
+			}
+		}
+
+		private void OnCollisionExit(Collision collision) {
+			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
+			if(blk != null) {
+				m_aIntersecting.Remove(blk);
+			}
+		}
+
 		/****************************************************************************************
 		 * Unity overrides
 		 ***************************************************************************************/
 		public override void Start() {
 			base.Start();
+
+			//reinstantiate list
+			ReloadIntersecting();
+
 			//initialize position variables to get ready for generating heightmaps.
 			init();
 

@@ -43,6 +43,7 @@ namespace Assets {
 			if (curtime < 0) {
 				init();
 				bReInitialized = true;
+				CBaseEntity.g_aEntList = new List<CBaseEntity>();
 			}
 			return bReInitialized;
 		}
@@ -56,6 +57,8 @@ namespace Assets {
 
 			timer = new Stopwatch();
 			timer.Start();
+
+			NRand.seedFromTime();
 		}
 
 		/**
