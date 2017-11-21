@@ -11,17 +11,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets {
+	abstract partial class g {
+		public static float TOWER_BUILDER_MAX_HEIGHT = 2048.0f;
+
+		public static CTowerBuilderRules TowerBuilderRules() {
+			return g.pRules as CTowerBuilderRules;
+		}
+	}
+
 	class CTowerBuilderRules : CGameRules {
 
 		//LINK THESE TO WORLD OBJECTS
-		public CHeightmapGenerator	m_pMeasuringStick;
-		public CBlockSequencer      m_pBlockSequencer;
+		public GameObject   _pMeasuringStick;
+		public GameObject   _pBlockSequencer;
+		public GameObject   _pPlatform;
+
+		//Private references to our actualy entities!
+		CHeightmapGenerator	m_pMeasuringStick;
+		CBlockSequencer		m_pBlockSequencer;
+		CBaseMoving			m_pPlatform;
 
 
 		//High score interface
-		CScoreTable scores = new CScoreTable();
+		CScoreTable m_pScores = new CScoreTable();
 
 		/****************************************************************************************
 		 * Checks if we're currently in a measuring sequence
@@ -53,7 +68,8 @@ namespace Assets {
 
 			if(g.curtime > m_flNextSequenceEnd) {
 				m_flNextSequenceEnd = float.MaxValue;
-				OnNewHighScore();
+				flMeasure = m_pMeasuringStick.SequenceMeasure();
+				OnNewScore(flMeasure);
 				bDidMeasure = true;
 			}
 			else if (SequenceActive()) {
@@ -65,21 +81,35 @@ namespace Assets {
 			}
 		}
 
-		//Called whenever a new high score is measured
-		public void OnNewHighScore() {
-
+		//Called whenever a new score is measured
+		public void OnNewScore(float flScore) {
+			AdjustPlatformCameraHeight(flScore);
+			if (m_pScores.notifyScore(flScore)) {
+				//new high score reached, do some explosions!
+			}
 		}
 
-		/****************************************************************************************
-		 * Ensures that there are enough blocks of each type.
-		 ***************************************************************************************/
-		public void CheckBlockCounts() {
-			//TODO iterate through block entities, check their booleans to count them, and dispatch templated spawning of more of them 
+		//TODO move camera along with platform
+		public void AdjustPlatformCameraHeight(float flScoreHeight) {
+			m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
+		}
+
+		public void OnBlockEnter(CBaseBlock pBlock) {
+
 		}
 
 		/****************************************************************************************
 		 * Unity overrides
 		 ***************************************************************************************/
+		public override void Start() {
+			base.Start();
+			m_pBlockSequencer	= _pBlockSequencer.GetComponent<CBlockSequencer>();
+			m_pMeasuringStick	= _pMeasuringStick.GetComponent<CHeightmapGenerator>();
+			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
+
+			m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
+		}
+
 		public override void Update() {
 			base.Update();
 			UpdateDisplays();

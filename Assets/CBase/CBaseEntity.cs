@@ -25,6 +25,23 @@ namespace Assets {
 		public static bool HasBaseEntity(GameObject obj) {
 			return ToBaseEntity(obj) != null;
 		}
+
+		public static CBaseEntity ToBaseEntity(int index) {
+			return CBaseEntity.g_aEntList[index];
+		}
+
+		public static CBaseEntity ToBaseEntity(string objName) {
+			CBaseEntity result = null;
+
+			foreach (CBaseEntity pEnt in CBaseEntity.g_aEntList) {
+				if (pEnt.obj().name.Equals(objName)) {
+					result = pEnt;
+					break;
+				}
+			}
+
+			return result;
+		}
 	}
 
 	/****************************************************************************************
@@ -52,6 +69,9 @@ namespace Assets {
 		 ***************************************************************************************/
 		public	void	TeleportTo(Vector3 vPosition) {
 			obj().transform.SetPositionAndRotation(vPosition, obj().transform.rotation);
+		}
+		public void		TeleportDisplaced(Vector3 vOffset) {
+			obj().transform.SetPositionAndRotation(obj().transform.position + vOffset,obj().transform.rotation);
 		}
 		public	Vector3	GetPosition() { return obj().transform.position; }
 

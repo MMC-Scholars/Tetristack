@@ -34,11 +34,9 @@ namespace Assets {
 		 * Because C#'s list interface is apparantly void of functionality
 		 */
 		static void swap(List<CBaseBlock> s,int i,int j) {
-			CBaseBlock ei = s.ElementAt(i);
-			s.RemoveAt(i);
-			s.Insert(i,s.ElementAt(j));
-			s.RemoveAt(j);
-			s.Insert(j,ei);
+			CBaseBlock tmp = s[i];
+			s[i] = s[j];
+			s[j] = tmp;
 		}
 
 		/**

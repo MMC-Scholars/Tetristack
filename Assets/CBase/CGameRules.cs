@@ -5,7 +5,6 @@
 /**
  * @author Michael Trunk
  * @startdate	6/11/2017
- * @enddate		7/11/2017
  */
 
 using System;
