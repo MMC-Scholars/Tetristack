@@ -25,6 +25,7 @@ namespace Assets {
 	class CTowerBuilderRules : CGameRules {
 
 		//LINK THESE TO WORLD OBJECTS
+		public Camera       m_pScreenshooter;
 		public GameObject   _pMeasuringStick;
 		public GameObject   _pBlockSequencer;
 		public GameObject   _pPlatform;
@@ -33,6 +34,8 @@ namespace Assets {
 		CHeightmapGenerator	m_pMeasuringStick;
 		CBlockSequencer		m_pBlockSequencer;
 		CBaseMoving			m_pPlatform;
+
+
 
 
 		//High score interface
@@ -94,7 +97,14 @@ namespace Assets {
 			m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
 		}
 
+		//Called when a block enters the "veil" of the building area, usually when held by hand
 		public void OnBlockEnter(CBaseBlock pBlock) {
+
+		}
+
+		//Called when a block exits the "veil" of the building area,
+		//either bc the player took it out or the tower is falling down
+		public void OnBlockExit(CBaseBlock pBlock) {
 
 		}
 

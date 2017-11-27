@@ -96,6 +96,7 @@
     <Compile Include="Assets\NHeightmap\CHeightmapGenerator.cs" />
     <Compile Include="Assets\NMath\NClamps.cs" />
     <Compile Include="Assets\NMath\NRand.cs" />
+    <Compile Include="Assets\NTowerBuilder\NScreenshooter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\NTowerBuilder\CBlockSequencer.cs" />

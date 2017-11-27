@@ -170,7 +170,9 @@ namespace Assets {
 			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
 			if (blk != null) {
 				m_aIntersecting.Add(blk);
+				g.TowerBuilderRules().OnBlockEnter(blk);
 			}
+
 		}
 
 		private void OnCollisionExit(Collision collision) {

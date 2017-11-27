@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace Assets {
 	abstract partial class g {
-		public static CBaseBlock ToBaseBlock(GameObject obj) {
+		public static bool			HasBaseBlock(GameObject obj) { return ToBaseBlock(obj) != null; }
+
+		public static CBaseBlock	ToBaseBlock(GameObject obj) {
 			return obj.GetComponent<CBaseBlock>();
 		}
 	}
