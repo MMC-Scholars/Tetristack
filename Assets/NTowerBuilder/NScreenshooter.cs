@@ -49,7 +49,7 @@ namespace Assets {
 		}
 
 		/**
-		 * Rengers 
+		 * Renders camera to png at given path with given resolution
 		 */ 
 		public static void RenderToPNG(Camera pCamera, int iRes, string sRelativePath) {
 			//just create a new texture, render to that, and export from there
@@ -59,6 +59,7 @@ namespace Assets {
 
 			byte[] imageData = tmp.EncodeToPNG();
 			string filepath = Application.persistentDataPath + sRelativePath;
+			
 			System.IO.File.WriteAllBytes(filepath,imageData);
 
 			//ensure memory is released

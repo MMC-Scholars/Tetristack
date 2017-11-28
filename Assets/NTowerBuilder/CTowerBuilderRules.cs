@@ -94,7 +94,7 @@ namespace Assets {
 
 		//TODO move camera along with platform
 		public void AdjustPlatformCameraHeight(float flScoreHeight) {
-			m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
+			//m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
 		}
 
 		//Called when a block enters the "veil" of the building area, usually when held by hand
@@ -113,11 +113,11 @@ namespace Assets {
 		 ***************************************************************************************/
 		public override void Start() {
 			base.Start();
-			m_pBlockSequencer	= _pBlockSequencer.GetComponent<CBlockSequencer>();
-			m_pMeasuringStick	= _pMeasuringStick.GetComponent<CHeightmapGenerator>();
-			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
+			if (_pBlockSequencer)	m_pBlockSequencer	= _pBlockSequencer.GetComponent<CBlockSequencer>();
+			if (_pMeasuringStick)	m_pMeasuringStick	= _pMeasuringStick.GetComponent<CHeightmapGenerator>();
+			if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
 
-			m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
+			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
 		}
 
 		public override void Update() {

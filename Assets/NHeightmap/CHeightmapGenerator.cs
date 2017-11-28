@@ -166,6 +166,26 @@ namespace Assets {
 			}
 		}
 
+		/**
+		 * Returns a heightmap texture in R8 format.
+		 */ 
+		Texture2D ToTexture() {
+			CHeightmap hmap = this.Generate();
+			Texture2D image = new Texture2D(m_iResolution, m_iResolution, TextureFormat.R8, false);
+
+			for (int i = 0; i < m_iResolution; i++) {
+				for (int j = 0; j < m_iResolution; j++) {
+					int c = hmap.m_aaValues[i][j];
+					image.SetPixel(i,j,new Color(c,c,c));
+				}
+			}
+
+			return image;
+		}
+
+		/****************************************************************************************
+		 * Unity overrides
+		 ***************************************************************************************/
 		private void OnCollisionEnter(Collision collision) {
 			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
 			if (blk != null) {
@@ -181,10 +201,6 @@ namespace Assets {
 				m_aIntersecting.Remove(blk);
 			}
 		}
-
-		/****************************************************************************************
-		 * Unity overrides
-		 ***************************************************************************************/
 		public override void Start() {
 			base.Start();
 
@@ -200,8 +216,6 @@ namespace Assets {
 
 		public override void Update() {
 			base.Update();
-
-
 		}
 	}
 }
