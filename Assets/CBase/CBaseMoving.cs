@@ -116,65 +116,34 @@ namespace Assets
             bIsOpening = false;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		void OpenDoor(bool IsOpen, float TimeToOpen)
+        void WaitToClose(float deltaTime)
         {
-			//Timer until TimeToOpen, then...
-			
-            IsOpen = true;
+            waitingTime += deltaTime;
+            if (g.curtime > waitingTime)
+            {
+                Close();
+            }
+
         }
 
-		void CloseDoor(bool IsOpen, float TimeToClose)
-        {
-            //Timer until TimeToClose, then...
+        //define in child class
+        void SetPosition(float lerp) { } 
 
-            IsOpen = false;
+        float GetEstimatedTravelTime()
+        {
+            return movementTime;
         }
 
-		//DestroyDoor()
+        bool IsOpening()
+        {
+            return bIsOpening;
+        }
 
-		
-
-
-
-
-
-
+        bool IsClosing()
+        {
+            return bIsClosing;
+        }
+ 
 
     }
 }
