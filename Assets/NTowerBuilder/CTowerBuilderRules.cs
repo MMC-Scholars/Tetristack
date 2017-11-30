@@ -35,7 +35,7 @@ namespace Assets {
 		CBlockSequencer		m_pBlockSequencer;
 		CBaseMoving			m_pPlatform;
 
-
+		int                 m_iHandCount = 0; //number of hands in the building area
 
 
 		//High score interface
@@ -105,6 +105,16 @@ namespace Assets {
 		//Called when a block exits the "veil" of the building area,
 		//either bc the player took it out or the tower is falling down
 		public void OnBlockExit(CBaseBlock pBlock) {
+
+		}
+
+		//Called when a hand enters the building area
+		public void OnHandEnter(GameObject hand) {
+
+		}
+
+		//called when a hand exits the building area
+		public void OnHandExit(GameObject hand) {
 
 		}
 
