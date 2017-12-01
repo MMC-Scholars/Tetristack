@@ -184,6 +184,12 @@ namespace Assets {
 		}
 
 		/****************************************************************************************
+		 * Sizing & Location helper functions
+		 ***************************************************************************************/
+		public float Height() { return m_flHeight; }
+		public Vector3 CenterBottom() { return new Vector3((m_vMaxXYZ.x + m_vMinXYZ.x)/2, m_vMinXYZ.y,(m_vMaxXYZ.z + m_vMinXYZ.z)); }
+
+		/****************************************************************************************
 		 * Unity overrides
 		 ***************************************************************************************/
 		private void OnCollisionEnter(Collision collision) {

@@ -29,6 +29,7 @@ namespace Assets {
 		public GameObject   _pMeasuringStick;
 		public GameObject   _pBlockSequencer;
 		public GameObject   _pPlatform;
+		public GameObject   m_pHighScoreHalo;
 
 		//Private references to our actualy entities!
 		CHeightmapGenerator	m_pMeasuringStick;
@@ -71,7 +72,7 @@ namespace Assets {
 
 			if(g.curtime > m_flNextSequenceEnd) {
 				m_flNextSequenceEnd = float.MaxValue;
-				flMeasure = m_pMeasuringStick.SequenceMeasure();
+				flMeasure = m_pMeasuringStick.MeasureMaxWorldUnits();
 				OnNewScore(flMeasure);
 				bDidMeasure = true;
 			}
@@ -84,11 +85,17 @@ namespace Assets {
 			}
 		}
 
+
+		void UpdateHighScoreHaloHeight() {
+			m_pHighScoreHalo.transform.position = m_pMeasuringStick.CenterBottom() + new Vector3(0,m_pScores.highScore(),0);
+		}
+
 		//Called whenever a new score is measured
 		public void OnNewScore(float flScore) {
 			AdjustPlatformCameraHeight(flScore);
 			if (m_pScores.notifyScore(flScore)) {
 				//new high score reached, do some explosions!
+
 			}
 		}
 
@@ -128,6 +135,8 @@ namespace Assets {
 			if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
 
 			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
+			m_pScores.reloadFromFile();
+			UpdateHighScoreHaloHeight();
 		}
 
 		public override void Update() {
