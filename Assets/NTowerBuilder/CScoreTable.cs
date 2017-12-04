@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace Assets {
 	class CScoreTable {
@@ -19,7 +20,15 @@ namespace Assets {
 
 			FileStream stream = new FileStream(s_sFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 			string str = stream.ToString();
-			m_flHighScore = float.Parse(str);
+
+			//copy string, removing non-digits
+			string flt = "";
+			for (int i = 0; i < str.Length; i++) {
+				if (Char.IsDigit(str[i]))
+				flt += str[i];
+			}
+
+			m_flHighScore = float.Parse("0.0", CultureInfo.InvariantCulture);
 			stream.Close();
 		}
 

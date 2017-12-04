@@ -28,13 +28,15 @@ namespace Assets {
 		public Camera       m_pScreenshooter;
 		public GameObject   _pMeasuringStick;
 		public GameObject   _pBlockSequencer;
-		public GameObject   _pPlatform;
+		//public GameObject   _pPlatform;
+		public GameObject   _pScoreText;
 		public GameObject   m_pHighScoreHalo;
 
 		//Private references to our actualy entities!
 		CHeightmapGenerator	m_pMeasuringStick;
 		CBlockSequencer		m_pBlockSequencer;
-		CBaseMoving			m_pPlatform;
+		//CBaseMoving			m_pPlatform;
+		TextMesh            m_pScoreText;
 
 		int                 m_iHandCount = 0; //number of hands in the building area
 
@@ -53,6 +55,7 @@ namespace Assets {
 		float m_flNextSequenceEnd;
 		static float MEASURE_DURATION = 3.0f;
 		public void SequenceBegin() { m_flNextSequenceEnd = g.curtime + MEASURE_DURATION; m_pMeasuringStick.SequenceBegin(MEASURE_DURATION); }
+		static bool s_bAlwaysMeasure = true;
 
 		/****************************************************************************************
 		 * Calls for a re-measuring of the max-height from the heightmap generator, and
@@ -68,20 +71,29 @@ namespace Assets {
 		 ***************************************************************************************/
 		public void UpdateDisplays() {
 			bool bDidMeasure = false;
-			float flMeasure;
+			float flMeasure = 0.0f;
 
-			if(g.curtime > m_flNextSequenceEnd) {
-				m_flNextSequenceEnd = float.MaxValue;
+			if(s_bAlwaysMeasure && g.curtime > m_flNextSequenceEnd) {
+				m_flNextSequenceEnd = g.curtime + 0.01f;
 				flMeasure = m_pMeasuringStick.MeasureMaxWorldUnits();
+				//m_pMeasuringStick.GenerateAndPrint();
 				OnNewScore(flMeasure);
 				bDidMeasure = true;
-			}
-			else if (SequenceActive()) {
-				flMeasure = m_pMeasuringStick.SequenceMeasure();
-				bDidMeasure = true;
+			} else if (!s_bAlwaysMeasure) {
+				if(g.curtime > m_flNextSequenceEnd) {
+					m_flNextSequenceEnd = float.MaxValue;
+					flMeasure = m_pMeasuringStick.MeasureMaxWorldUnits();
+					OnNewScore(flMeasure);
+					bDidMeasure = true;
+				} else if(SequenceActive()) {
+					flMeasure = m_pMeasuringStick.SequenceMeasure();
+					bDidMeasure = true;
+				}
 			}
 			if (bDidMeasure) {
 				//TODO link to displays!
+				string text = String.Format("{0:F2}m", flMeasure);
+				m_pScoreText.text = text;
 			}
 		}
 
@@ -95,7 +107,7 @@ namespace Assets {
 			AdjustPlatformCameraHeight(flScore);
 			if (m_pScores.notifyScore(flScore)) {
 				//new high score reached, do some explosions!
-
+				UpdateHighScoreHaloHeight();
 			}
 		}
 
@@ -132,7 +144,8 @@ namespace Assets {
 			base.Start();
 			if (_pBlockSequencer)	m_pBlockSequencer	= _pBlockSequencer.GetComponent<CBlockSequencer>();
 			if (_pMeasuringStick)	m_pMeasuringStick	= _pMeasuringStick.GetComponent<CHeightmapGenerator>();
-			if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
+			//if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
+			if (_pScoreText)		m_pScoreText		= _pScoreText.GetComponent<TextMesh>();
 
 			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
 			m_pScores.reloadFromFile();
@@ -142,6 +155,7 @@ namespace Assets {
 		public override void Update() {
 			base.Update();
 			UpdateDisplays();
+			
 		}
 	}
 }

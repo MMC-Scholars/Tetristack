@@ -17,7 +17,21 @@ namespace Assets {
 		/****************************************************************************************
 		 * Public constructors
 		 ***************************************************************************************/
-		public CHeightmap(int _iResolution) { m_iResolution = _iResolution; }
+		public CHeightmap(int _iResolution) {
+			m_iResolution = _iResolution;
+			m_aaValues = new List<List<int>>();
+			m_aaValues.Capacity = _iResolution;
+			for (int i = 0; i < _iResolution; i++) {
+				List<int> pList = new List<int>();
+				pList.Capacity = _iResolution;
+
+				for(int j = 0; j < _iResolution; j++)
+					pList.Add(-1);
+
+				m_aaValues.Add(pList);
+				
+			}
+		}
 
 		/****************************************************************************************
 		 * Public accessors

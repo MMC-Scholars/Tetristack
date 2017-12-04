@@ -40,7 +40,7 @@ namespace Assets {
 
 		public static bool CheckForReinitializationOnStart() {
 			bool bReInitialized = false;
-			if (curtime < 0) {
+			if (g_bReinitialize) {
 				init();
 				bReInitialized = true;
 				CBaseEntity.g_aEntList = new List<CBaseEntity>();
