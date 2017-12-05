@@ -65,7 +65,7 @@ namespace Assets {
 			Vector3 vStart = m_vStart + new Vector3(m_flStepZ * j, 0, m_flStepX * i);
 			RaycastHit tr = new RaycastHit();
 			Physics.Raycast(vStart,s_vDown,out tr);
-			Debug.DrawLine(vStart, vStart - new Vector3(0, m_flHeight, 0));
+			//Debug.DrawLine(vStart, vStart - new Vector3(0, m_flHeight, 0));
 			return int.MaxValue - (int)((tr.distance / m_flHeight) * int.MaxValue);
 		}
 
@@ -192,7 +192,7 @@ namespace Assets {
 		 * Sizing & Location helper functions
 		 ***************************************************************************************/
 		public float Height() { return m_flHeight; }
-		public Vector3 CenterBottom() { return new Vector3((m_vMaxXYZ.x + m_vMinXYZ.x)/2, m_vMinXYZ.y,(m_vMaxXYZ.z + m_vMinXYZ.z)); }
+		public Vector3 CenterBottom() { return new Vector3((m_vMaxXYZ.x + m_vMinXYZ.x)/2, m_vMinXYZ.y,(m_vMaxXYZ.z + m_vMinXYZ.z)/2); }
 
 		/****************************************************************************************
 		 * Unity overrides

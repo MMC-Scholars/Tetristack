@@ -40,6 +40,7 @@ namespace Assets {
 
 		int                 m_iHandCount = 0; //number of hands in the building area
 
+		float               m_flNextBlockDrop = 0.0f;
 
 		//High score interface
 		CScoreTable m_pScores = new CScoreTable();
@@ -99,6 +100,7 @@ namespace Assets {
 
 
 		void UpdateHighScoreHaloHeight() {
+			//Debug.DrawLine(new Vector3(),m_pMeasuringStick.CenterBottom());
 			m_pHighScoreHalo.transform.position = m_pMeasuringStick.CenterBottom() + new Vector3(0,m_pScores.highScore(),0);
 		}
 
@@ -147,6 +149,8 @@ namespace Assets {
 			//if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
 			if (_pScoreText)		m_pScoreText		= _pScoreText.GetComponent<TextMesh>();
 
+			m_flNextBlockDrop = 0.0f;
+
 			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
 			m_pScores.reloadFromFile();
 			UpdateHighScoreHaloHeight();
@@ -156,6 +160,10 @@ namespace Assets {
 			base.Update();
 			UpdateDisplays();
 			
+			if (g.curtime > m_flNextBlockDrop) {
+				m_flNextBlockDrop = g.curtime + 1.0f;
+				m_pBlockSequencer.nextBlock(m_pBlockSequencer.obj().transform.position);
+			}
 		}
 	}
 }
