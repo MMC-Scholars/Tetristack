@@ -163,6 +163,7 @@ namespace Assets {
 			if (g.curtime > m_flNextBlockDrop) {
 				m_flNextBlockDrop = g.curtime + 1.0f;
 				m_pBlockSequencer.nextBlock(m_pBlockSequencer.obj().transform.position);
+				
 			}
 		}
 	}

@@ -78,6 +78,7 @@ namespace Assets {
 			CHeightmap dest = new CHeightmap(m_iResolution);
 			for (int j = 0; j < m_iResolution; j++) {
 				for (int i = 0; i < m_iResolution; i++) {
+
 					dest.m_aaValues[j][i] = cast(j,i);
 				}
 			}

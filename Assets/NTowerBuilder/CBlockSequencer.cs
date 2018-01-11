@@ -76,10 +76,12 @@ namespace Assets {
 				m_qBlocks = nextTetrisPieceSequence();
 			}
 			CBaseBlock source = m_qBlocks.Dequeue();
-			CBaseBlock blk = Instantiate(source.obj(),pos,new Quaternion()).GetComponent<CBaseBlock>();
+			CBaseBlock blk = g.ToBaseBlock(Instantiate(source.obj(), pos, obj().transform.rotation));
+
+			//Debug.Log(blk.obj().GetComponent<MeshRenderer>() != null);
+			//obj().transform.parent = blk.obj().transform;
 
 			blk.m_pSource = source;
-			blk.AddFlags(FL_NODAMAGE | FL_DESTROY_ON_RESPAWN); //so that blocks are removed on restart round
 			return blk;
 		}
 

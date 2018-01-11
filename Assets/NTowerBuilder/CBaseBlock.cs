@@ -15,9 +15,9 @@ namespace Assets {
 
 	class CBaseBlock : CBaseEntity {
 
-		public CBaseBlock m_pSource; //block which was used as a template to instantiate this block
+		public CBaseBlock m_pSource = null; //block which was used as a template to instantiate this block
 
-		public bool isInstantiated() { return m_pSource != null; }
+		public bool IsInstantiated() { return m_pSource != null; }
 
 		/**
 		 * Counts the total number of blocks in the game.
@@ -40,6 +40,18 @@ namespace Assets {
 				if(pBlock != null && pBlock.m_pSource == pSource) count++;
 			}
 			return count;
+		}
+
+		public override void OnDestroy() {
+			base.OnDestroy();
+		}
+
+		public override void Start() {
+			base.Start();
+			if (IsInstantiated()) {
+				AddFlags(FL_NODAMAGE | FL_DESTROY_ON_RESPAWN); //so that blocks are removed on restart round
+				GetRigidbody().useGravity = false;
+			}
 		}
 	}
 }

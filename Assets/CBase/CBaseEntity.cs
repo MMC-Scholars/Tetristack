@@ -52,6 +52,18 @@ namespace Assets {
 		//This simple accessor will help us type less later on
 		public	GameObject	obj() { return gameObject; }
 
+		//Shortcut accessors for gameobject's components
+		public Vector3 GetAbsOrigin() { return obj().transform.position; }
+		public Quaternion GetAbsAngles() { return obj().transform.rotation; }
+
+		public Transform GetTransform() {
+			return obj().transform;
+		}
+
+		public Rigidbody GetRigidbody() {
+			return obj().GetComponent<Rigidbody>();
+		}
+
 		/****************************************************************************************
 		 * Global entity list functionality
 		 ***************************************************************************************/

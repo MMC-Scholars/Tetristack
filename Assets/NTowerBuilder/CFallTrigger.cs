@@ -24,14 +24,15 @@ namespace Assets.NTowerBuilder {
 		 ***********************************************************/ 
 		private void OnCollisionEnter(Collision collision) {
 			CBaseBlock blk = collision.collider.gameObject.GetComponent<CBaseBlock>();
-			if (blk != null && blk.isInstantiated()) {
+			if (blk != null && blk.IsInstantiated()) {
 				m_iCount++;
 			}
 		}
 
 		private void OnCollisionExit(Collision collision) {
 			CBaseBlock blk = collision.collider.gameObject.GetComponent<CBaseBlock>();
-			if(blk != null && blk.isInstantiated()) {
+			if(blk != null && blk.IsInstantiated()) {
+				Debug.Log("Destroying CBaseBlock\n");
 				CBaseBlock.Destroy(blk.obj());
 			}
 		}
