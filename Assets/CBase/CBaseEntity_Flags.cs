@@ -38,11 +38,12 @@ namespace Assets {
 		/**
 		 * These are the bit flags
 		 */
-		public  static int  FL_INVINCIBLE			= 1 << 0,	//Clamp health to always be above one?
-							FL_NODAMAGE				= 1 << 1,	//Block all damage? (health stays at default value)
-							FL_TRIGGERIGNORE		= 1 << 2,	//Should MMC's triggers ignore this entity?
-							FL_IGNORE_USE			= 1 << 3,
-							FL_DESTROY_ON_RESPAWN	= 1 << 4;	//use this for instantiated copies that should be destroyed on restart round
+		public  static int  FL_INVINCIBLE           = 1 << 0,	//Clamp health to always be above one?
+							FL_NODAMAGE             = 1 << 1,	//Block all damage? (health stays at default value)
+							FL_TRIGGERIGNORE        = 1 << 2,	//Should MMC's triggers ignore this entity?
+							FL_IGNORE_USE           = 1 << 3,
+							FL_DESTROY_ON_RESPAWN   = 1 << 4,	//use this for instantiated copies that should be destroyed on restart round
+							FL_ALLOW_PICKUP         = 1 << 5;
 
 		/**
 		 * Use this to check if an object has a specific flag

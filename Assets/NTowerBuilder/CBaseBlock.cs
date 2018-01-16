@@ -49,8 +49,8 @@ namespace Assets {
 		public override void Start() {
 			base.Start();
 			if (IsInstantiated()) {
-				AddFlags(FL_NODAMAGE | FL_DESTROY_ON_RESPAWN); //so that blocks are removed on restart round
-				GetRigidbody().useGravity = false;
+				AddFlags(FL_ALLOW_PICKUP | FL_NODAMAGE | FL_DESTROY_ON_RESPAWN); //so that blocks are removed on restart round
+				SetGravityEnabled(false);
 			}
 		}
 	}

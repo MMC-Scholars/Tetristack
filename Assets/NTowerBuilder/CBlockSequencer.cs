@@ -33,7 +33,7 @@ namespace Assets {
 		/**
 		 * Because C#'s list interface is apparantly void of functionality
 		 */
-		static void swap(List<CBaseBlock> s,int i,int j) {
+		static void Swap(List<CBaseBlock> s,int i,int j) {
 			CBaseBlock tmp = s[i];
 			s[i] = s[j];
 			s[j] = tmp;
@@ -45,7 +45,7 @@ namespace Assets {
 		 * and 2 S because each of those represent two blocks.
 		 * In random order.
 		 */
-		Queue<CBaseBlock> nextTetrisPieceSequence() {
+		Queue<CBaseBlock> NextTetrisPieceSequence() {
 			//Just build the list first and then we'll randomly swap around
 			List<CBaseBlock> s = new List<CBaseBlock>();
 			s.Add(I);
@@ -60,7 +60,7 @@ namespace Assets {
 			for(int i = 0; i < 20; i++) {
 				int j = NRand.randInt(0, 6);
 				int k = NRand.randInt(0, 6);
-				swap(s,j,k);
+				Swap(s,j,k);
 			}
 
 			//we don't actually need the enum
@@ -71,9 +71,9 @@ namespace Assets {
 		/**
 		 * Duplicates the next piece to the given position
 		 */
-		public CBaseBlock nextBlock(Vector3 pos) {
+		public CBaseBlock NextBlock(Vector3 pos) {
 			if (m_qBlocks.Count() == 0) {
-				m_qBlocks = nextTetrisPieceSequence();
+				m_qBlocks = NextTetrisPieceSequence();
 			}
 			CBaseBlock source = m_qBlocks.Dequeue();
 			CBaseBlock blk = g.ToBaseBlock(Instantiate(source.obj(), pos, obj().transform.rotation));

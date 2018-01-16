@@ -40,7 +40,8 @@ namespace Assets {
 
 		int                 m_iHandCount = 0; //number of hands in the building area
 
-		float               m_flNextBlockDrop = 0.0f;
+		//float               m_flNextBlockDrop = 0.0f;
+		bool                m_bForceBlockDrop = true;
 
 		//High score interface
 		CScoreTable m_pScores = new CScoreTable();
@@ -118,9 +119,15 @@ namespace Assets {
 			//m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
 		}
 
+		private CBaseBlock CreateBlock() {
+			return m_pBlockSequencer.NextBlock(m_pBlockSequencer.GetTransform().position);
+		}
+
 		//Called when a block enters the "veil" of the building area, usually when held by hand
 		public void OnBlockEnter(CBaseBlock pBlock) {
+			pBlock.SetGravityEnabled(true);
 
+			CreateBlock();
 		}
 
 		//Called when a block exits the "veil" of the building area,
@@ -149,21 +156,23 @@ namespace Assets {
 			//if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
 			if (_pScoreText)		m_pScoreText		= _pScoreText.GetComponent<TextMesh>();
 
-			m_flNextBlockDrop = 0.0f;
+			
 
 			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
 			m_pScores.reloadFromFile();
 			UpdateHighScoreHaloHeight();
+
+			
 		}
 
 		public override void Update() {
 			base.Update();
 			UpdateDisplays();
 			
-			if (g.curtime > m_flNextBlockDrop) {
-				m_flNextBlockDrop = g.curtime + 1.0f;
-				m_pBlockSequencer.nextBlock(m_pBlockSequencer.obj().transform.position);
-				
+			if (m_bForceBlockDrop) {
+				m_bForceBlockDrop = false;
+				//m_flNextBlockDrop = g.curtime + 1.0f;
+				CreateBlock();
 			}
 		}
 	}

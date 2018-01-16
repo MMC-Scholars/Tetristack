@@ -60,10 +60,6 @@ namespace Assets {
 			return obj().transform;
 		}
 
-		public Rigidbody GetRigidbody() {
-			return obj().GetComponent<Rigidbody>();
-		}
-
 		/****************************************************************************************
 		 * Global entity list functionality
 		 ***************************************************************************************/
@@ -94,7 +90,7 @@ namespace Assets {
 			return Physics.Raycast(GetPosition(), pEnt.GetPosition() - GetPosition());
 		}
 		public	bool	CanSee(Vector3 vPos) {
-			return Physics.Raycast(GetPosition(), vPos - GetPosition());
+			return UnityEngine.Physics.Raycast(GetPosition(), vPos - GetPosition());
 		}
 
 		/****************************************************************************************
@@ -107,6 +103,25 @@ namespace Assets {
 			}
 		}
 		public	virtual void	OnUsed(CBaseEntity pUser) { }
+
+		/****************************************************************************************
+		 * Aliases for transform parenting
+		 ***************************************************************************************/
+		public	void			SetParent(CBaseEntity pParent) {
+			GetTransform().parent = pParent.GetTransform();
+		}
+		public	CBaseEntity		GetParent() { return g.ToBaseEntity(GetTransform().parent.gameObject); }
+		
+
+		/****************************************************************************************
+		 * Physics aliases
+		 ***************************************************************************************/
+		//private Rigidbody       m_pRigidBody;
+		public	bool			HasPhysics()						{ return GetPhysics() != null; }
+		public	Rigidbody		GetPhysics()						{ return obj().GetComponent<Rigidbody>(); }
+		public	void			SetGravityEnabled(bool bEnabled)	{ GetPhysics().useGravity = bEnabled; }
+		public	bool			GetGravityEnabled()					{ return GetPhysics().useGravity; }
+
 
 		/****************************************************************************************
 		 * Health functionality
@@ -182,6 +197,8 @@ namespace Assets {
 		public virtual void		Start() {
 			g.CheckForReinitializationOnStart();
 			g_aEntList.Add(this);
+
+			//m_pRigidBody = obj().GetComponent<Rigidbody>();
 
 			//Remember default spawn values
 			m_iSpawnFlags		= m_iFlags;
