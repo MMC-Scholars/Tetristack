@@ -43,7 +43,7 @@ namespace Assets {
 		List<CBaseBlock> m_aIntersecting = new List<CBaseBlock>();
 
 		//perform other position calculations
-		private void		init() {
+		public void		init() {
 			Renderer bounds = obj().GetComponent<Renderer>();
 			if (bounds != null) {
 				m_vMinXYZ = bounds.bounds.min;
@@ -194,6 +194,7 @@ namespace Assets {
 		 ***************************************************************************************/
 		public float Height() { return m_flHeight; }
 		public Vector3 CenterBottom() { return new Vector3((m_vMaxXYZ.x + m_vMinXYZ.x)/2, m_vMinXYZ.y,(m_vMaxXYZ.z + m_vMinXYZ.z)/2); }
+		public void		DrawDiagonalLine() { Debug.DrawLine(m_vMinXYZ, m_vMaxXYZ, Color.red, 10.0f); }
 
 		/****************************************************************************************
 		 * Unity overrides
@@ -228,6 +229,7 @@ namespace Assets {
 
 		public override void Update() {
 			base.Update();
+			//DrawDiagonalLine();
 		}
 	}
 }
