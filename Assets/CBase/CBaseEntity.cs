@@ -71,6 +71,7 @@ namespace Assets {
 		 ***************************************************************************************/
 		private Vector3     m_vSpawnLocation;
 		private Quaternion  m_qSpawnAngle;
+		public  Vector3     m_vSpawnVelocity = new Vector3();
 
 		/****************************************************************************************
 		 * Teleport / positition functionality
@@ -171,22 +172,22 @@ namespace Assets {
 		public	float	GetLastRespawnTime() { return m_flLastRespawnTime; }
 		private	void	CalculateNextRespawnTime() { m_flNextRespawnTime = g.curtime + 10.0f; }
 
-		public	void	Respawn() {
-			if(HasFlag(FL_DESTROY_ON_RESPAWN)) {
-				Destroy(obj());
-			} else {
-				m_flLastRespawnTime = g.curtime;
-				obj().SetActive(true);
+		public	virtual void	Respawn() {
+			m_flLastRespawnTime = g.curtime;
+			obj().SetActive(true);
 
-				//reset position
-				obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
+			//reset position
+			obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
 
-				//reset bitflags
-				m_iFlags = m_iSpawnFlags;
+			//set velocity
+			if (HasPhysics())
+				GetPhysics().velocity = m_vSpawnVelocity;
 
-				//reset health
-				m_iHealth = m_iSpawnHealth;
-			}
+			//reset bitflags
+			m_iFlags = m_iSpawnFlags;
+
+			//reset health
+			m_iHealth = m_iSpawnHealth;
 		}
 
 		/****************************************************************************************
@@ -214,8 +215,13 @@ namespace Assets {
 		// Update is called once per frame
 		public virtual void		Update() {
 			//Check for next respawn
-			if (g.curtime > m_flNextRespawnTime)
-				Respawn();
+			if (g.curtime > m_flNextRespawnTime) {
+				if(HasFlag(FL_DESTROY_ON_RESPAWN))
+					Destroy(obj());
+				else
+					Respawn();
+			}
+				
 		}
 
 		/**
