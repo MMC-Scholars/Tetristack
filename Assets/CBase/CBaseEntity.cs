@@ -193,6 +193,7 @@ namespace Assets {
 		/****************************************************************************************
 		 * MonoBehavior overrides
 		 ***************************************************************************************/
+		
 
 		// Use this for initialization
 		public virtual void		Start() {
@@ -230,5 +231,9 @@ namespace Assets {
 		public virtual void		OnApplicationQuit() {
 			g.MarkForReinitializationOnNextStart();
 		}
+
+		//These are called when enabled or disabled
+		public virtual void	OnEnable() { }
+		public virtual void OnDisable() { }
 	}
 }

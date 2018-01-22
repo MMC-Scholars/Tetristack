@@ -51,6 +51,21 @@ namespace Assets {
 		public bool		HasFlag(int iFlag) {
 			return (m_iFlags & iFlag) > 0;
 		}
-							
+		
+		/**
+		 * These set and check bit flags to set entity vulnerability
+		 */ 
+		//Can we be damaged and killed?
+		public bool		IsVulnerable() { return !HasFlag(FL_INVINCIBLE) && !HasFlag(FL_NODAMAGE); } 
+		
+		//Sets flags such that this entity can be damaged and killed
+		public void		SetVulnerable(bool bVulnerable) {
+			int flags = FL_INVINCIBLE | FL_NODAMAGE;
+
+			if (bVulnerable)
+				RemoveFlags(flags);
+			else
+				AddFlags(flags);
+		}
 	}
 }
