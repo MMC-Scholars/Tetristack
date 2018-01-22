@@ -90,9 +90,11 @@
     <Compile Include="Assets\CBase\CGameRules.cs" />
     <Compile Include="Assets\CBase\CSequencer.cs" />
     <Compile Include="Assets\CBase\CSprite.cs" />
+    <Compile Include="Assets\CBase\CUniqueTrigger.cs" />
     <Compile Include="Assets\CBase\Globals.cs" />
     <Compile Include="Assets\NHeightmap\CHeightmap.cs" />
     <Compile Include="Assets\NHeightmap\CHeightmapGenerator.cs" />
+    <Compile Include="Assets\NMath\NEntity.cs" />
     <Compile Include="Assets\NMath\NClamps.cs" />
     <Compile Include="Assets\NMath\NRand.cs" />
     <Compile Include="Assets\NTowerBuilder\CBaseBlock.cs" />

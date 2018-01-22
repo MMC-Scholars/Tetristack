@@ -77,10 +77,7 @@ namespace Assets {
 			}
 			CBaseBlock source = m_qBlocks.Dequeue();
 			CBaseBlock blk = g.ToBaseBlock(Instantiate(source.obj(), pos, obj().transform.rotation));
-
-			//Debug.Log(blk.obj().GetComponent<MeshRenderer>() != null);
-			//obj().transform.parent = blk.obj().transform;
-
+			
 			blk.m_pSource = source;
 			return blk;
 		}
