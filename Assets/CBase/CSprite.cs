@@ -9,8 +9,7 @@ namespace Assets {
 
 		public override void Update() {
 			base.Update();
-			Vector3 offset = obj().transform.position - m_pViewTarget.transform.position;
-			transform.rotation = Quaternion.LookRotation(offset);
+			transform.rotation = GetAngleTo(m_pViewTarget.transform.position);
 		}
 	}
 }

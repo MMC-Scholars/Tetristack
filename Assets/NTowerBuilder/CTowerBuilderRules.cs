@@ -14,7 +14,7 @@ using System.Text;
 using UnityEngine;
 
 namespace Assets {
-	abstract partial class g {
+	public abstract partial class g {
 		public static float TOWER_BUILDER_MAX_HEIGHT = 2048.0f;
 
 		public static CTowerBuilderRules TowerBuilderRules() {
@@ -22,7 +22,7 @@ namespace Assets {
 		}
 	}
 
-	class CTowerBuilderRules : CGameRules {
+	public class CTowerBuilderRules : CGameRules {
 
 		//LINK THESE TO WORLD OBJECTS
 		public Camera       m_pScreenshooter;
@@ -42,6 +42,8 @@ namespace Assets {
 
 		//float               m_flNextBlockDrop = 0.0f;
 		bool                m_bForceBlockDrop = true;
+
+		public AudioClip    m_pRestartRoundSound;
 
 		//High score interface
 		CScoreTable m_pScores = new CScoreTable();
@@ -120,14 +122,22 @@ namespace Assets {
 		}
 
 		private CBaseBlock CreateBlock() {
-			return m_pBlockSequencer.NextBlock(m_pBlockSequencer.GetTransform().position);
+			CBaseBlock pBlock = m_pBlockSequencer.NextBlock(m_pBlockSequencer.GetTransform().position);
+			pBlock.SetGravityEnabled(false);
+			return pBlock;
 		}
 
 		//Called when a block enters the "veil" of the building area, usually when held by hand
 		public void OnBlockEnter(CBaseBlock pBlock) {
-			pBlock.SetGravityEnabled(true);
+			if (!pBlock.m_bHasEnteredBuildingArea) {
+				CreateBlock();
+				pBlock.m_bHasEnteredBuildingArea = true;
+				pBlock.SetGravityEnabledByDefault(true);
+			}
+		}
 
-			CreateBlock();
+		public void OnBlockDropped(CBaseBlock pBlock) {
+			UpdateDisplays();
 		}
 
 		//Called when a block exits the "veil" of the building area,
@@ -152,8 +162,13 @@ namespace Assets {
 		}
 
 		public override void RestartRound() {
+			g.RightController().RemoveAllLinkedEntityInputs();
+			g.LeftController().RemoveAllLinkedEntityInputs();
+
 			base.RestartRound();
 			m_bForceBlockDrop = true;
+
+			EmitSound(m_pRestartRoundSound);
 		}
 
 		/****************************************************************************************
@@ -172,13 +187,11 @@ namespace Assets {
 			m_pScores.reloadFromFile();
 			m_pMeasuringStick.init();
 			UpdateHighScoreHaloHeight();
-
-			
 		}
 
 		public override void Update() {
 			base.Update();
-			UpdateDisplays();
+			//UpdateDisplays();
 			
 			if (m_bForceBlockDrop) {
 				m_bForceBlockDrop = false;

@@ -13,11 +13,15 @@ namespace Assets {
 		}
 	}
 
-	class CBaseBlock : CBaseEntity {
+	public class CBaseBlock : CBaseEntity {
 
 		public CBaseBlock m_pSource = null; //block which was used as a template to instantiate this block
 
 		public bool IsInstantiated() { return m_pSource != null; }
+		public bool m_bHasEnteredBuildingArea = false;
+
+		public AudioClip m_pPickupSound;
+		public AudioClip m_pDroppedSound;
 
 		/**
 		 * Counts the total number of blocks in the game.
@@ -48,10 +52,29 @@ namespace Assets {
 
 		public override void Start() {
 			base.Start();
+			m_bHasEnteredBuildingArea = false;
 			if (IsInstantiated()) {
 				AddFlags(FL_ALLOW_PICKUP | FL_NODAMAGE | FL_DESTROY_ON_RESPAWN); //so that blocks are removed on restart round
 				//SetGravityEnabled(false);
 			}
+		}
+
+		public override void Update() {
+			if (!GetGravityEnabled()) {
+				SetAbsVelocity(Vector3.zero);
+				SetAngVelocity(Vector3.zero);
+			}
+		}
+
+		public override void OnPickedUp(CBaseController pController) {
+			base.OnPickedUp(pController);
+			EmitSound(m_pPickupSound);
+		}
+
+		public override void OnDropped(CBaseController pController) {
+			base.OnDropped(pController);
+			g.TowerBuilderRules().OnBlockDropped(this);
+			EmitSound(m_pDroppedSound);
 		}
 	}
 }

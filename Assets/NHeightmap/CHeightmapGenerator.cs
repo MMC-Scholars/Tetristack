@@ -199,17 +199,17 @@ namespace Assets {
 		/****************************************************************************************
 		 * Unity overrides
 		 ***************************************************************************************/
-		private void OnCollisionEnter(Collision collision) {
-			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
-			if (blk != null) {
+		private void OnTriggerEnter(Collider collider) {
+			CBaseBlock blk = g.ToBaseBlock(collider.gameObject);
+			if (blk != null && !m_aIntersecting.Contains(blk)) {
 				m_aIntersecting.Add(blk);
 				g.TowerBuilderRules().OnBlockEnter(blk);
 			}
 
 		}
 
-		private void OnCollisionExit(Collision collision) {
-			CBaseBlock blk = g.ToBaseBlock(collision.collider.gameObject);
+		private void OnTriggerExit(Collider collider) {
+			CBaseBlock blk = g.ToBaseBlock(collider.gameObject);
 			if(blk != null) {
 				m_aIntersecting.Remove(blk);
 			}

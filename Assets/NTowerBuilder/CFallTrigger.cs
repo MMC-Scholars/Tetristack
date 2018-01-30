@@ -25,7 +25,6 @@ namespace Assets {
 		 ***********************************************************/
 		private void OnTriggerEnter(Collider other) {
 			CBaseBlock blk = other.gameObject.GetComponent<CBaseBlock>();
-			Debug.Log(blk != null);
 			if(blk != null && blk.IsInstantiated()) {
 				
 				m_iCount++;

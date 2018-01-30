@@ -16,9 +16,12 @@ using UnityEngine;
 namespace Assets {
 	abstract partial class g {
 		public static CGameRules pRules;
+
+		public static CBaseController LeftController() { return pRules.m_pLeftController.GetComponent<CBaseController>(); }
+		public static CBaseController RightController() { return pRules.m_pRightController.GetComponent<CBaseController>(); }
 	}
 
-	class CGameRules : CBaseEntity {
+	public class CGameRules : CBaseEntity {
 
 		/**
 		 * Sets all entities to their default health and spawn flags.
@@ -28,7 +31,10 @@ namespace Assets {
 			for(int i = 0; i < g_aEntList.Count; i++) {
 				CBaseEntity pEnt = g_aEntList[i];
 				if (pEnt != null) {
-					pEnt.Respawn();
+					if (pEnt.HasFlag(FL_DESTROY_ON_RESPAWN))
+						Destroy(pEnt.obj());
+					else
+						pEnt.Respawn();
 				}
 			}
 		}
@@ -42,10 +48,13 @@ namespace Assets {
 			ReloadAllEntities();
 		}
 
+		public override void Awake() {
+			base.Awake();
+			g.pRules = this;
+		}
 		public override void Start() {
 			base.Start();
 			m_iSpawnFlags = m_iFlags = FL_IGNORE_USE | FL_NODAMAGE | FL_TRIGGERIGNORE;
-			g.pRules = this;
 		}
 
 		public override void Update() {
@@ -55,5 +64,8 @@ namespace Assets {
 		public virtual	void FixedUpdate() {
 			g.updateGlobals();
 		}
+
+		public GameObject m_pLeftController;
+		public GameObject m_pRightController;
 	}
 }

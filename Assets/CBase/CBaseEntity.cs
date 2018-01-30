@@ -52,9 +52,15 @@ namespace Assets {
 		//This simple accessor will help us type less later on
 		public	GameObject	obj() { return gameObject; }
 
-		//Shortcut accessors for gameobject's components
-		public Vector3 GetAbsOrigin() { return obj().transform.position; }
-		public Quaternion GetAbsAngles() { return obj().transform.rotation; }
+		/****************************************************************************************
+		* Position/transform/velocity aliases
+		***************************************************************************************/
+		public Vector3		GetAbsOrigin() { return obj().transform.position; }
+		public Quaternion	GetAbsAngles() { return obj().transform.rotation; }
+		public Vector3		GetAbsVelocity() { return GetPhysics().velocity; }
+		public void			SetAbsVelocity(Vector3 velocity) { GetPhysics().velocity = velocity; }
+		public Vector3		GetAngVelocity() { return GetPhysics().angularVelocity; }
+		public void			SetAngVelocity(Vector3 velocity) { GetPhysics().angularVelocity = velocity; }
 
 		public Transform GetTransform() {
 			return obj().transform;
@@ -72,17 +78,31 @@ namespace Assets {
 		private Vector3     m_vSpawnLocation;
 		private Quaternion  m_qSpawnAngle;
 		public  Vector3     m_vSpawnVelocity = new Vector3();
+		public	Vector3		GetSpawnLocation() { return m_vSpawnLocation; }
 
 		/****************************************************************************************
-		 * Teleport / positition functionality
+		 * Teleport / position functionality
 		 ***************************************************************************************/
 		public	void	TeleportTo(Vector3 vPosition) {
 			obj().transform.SetPositionAndRotation(vPosition, obj().transform.rotation);
 		}
-		public void		TeleportDisplaced(Vector3 vOffset) {
+		public	void	TeleportDisplaced(Vector3 vOffset) {
 			obj().transform.SetPositionAndRotation(obj().transform.position + vOffset,obj().transform.rotation);
 		}
 		public	Vector3	GetPosition() { return obj().transform.position; }
+		public	Vector3 GetOffsetTo(Vector3 vPosition) {
+			return vPosition - GetAbsOrigin();
+		}
+		public	Vector3 GetOffsetTo(CBaseEntity pEnt) {
+			return GetOffsetTo(pEnt.GetAbsOrigin());
+		}
+
+		public	Quaternion GetAngleTo(Vector3 vPosition) {
+			return Quaternion.LookRotation(GetOffsetTo(vPosition));
+		}
+		public	Quaternion GetAngleTo(CBaseEntity pEnt) {
+			return Quaternion.LookRotation(GetOffsetTo(pEnt.GetAbsOrigin()));
+		}
 
 		/****************************************************************************************
 		 * Visibility functionality
@@ -98,10 +118,24 @@ namespace Assets {
 		 * Generic "Use" functionality
 		 ***************************************************************************************/
 		public	bool			IsUseable() { return !HasFlag(FL_IGNORE_USE); }
-		public	void			Use(CBaseEntity pUser) {
-			if (!IsUseable()) {
+		public	void			SetUseable(bool bUseable) {
+			if (bUseable)
+				RemoveFlags(FL_IGNORE_USE);
+			else
+				AddFlags(FL_IGNORE_USE);
+		}
+		public	bool			Use(CBaseEntity pUser) {
+			bool bUsed = IsUseable();
+			if (bUsed) {
+				if (m_bUseTogglesPickup && pUser is CBaseController) {
+					if (!m_bIsPickedUp || pUser != GetParent())
+						Pickup(pUser as CBaseController);
+					else
+						Drop(pUser as CBaseController);
+				}
 				OnUsed(pUser);
 			}
+			return bUsed;
 		}
 		public	virtual void	OnUsed(CBaseEntity pUser) { }
 
@@ -112,17 +146,17 @@ namespace Assets {
 			GetTransform().parent = pParent.GetTransform();
 		}
 		public	CBaseEntity		GetParent() { return g.ToBaseEntity(GetTransform().parent.gameObject); }
-		
+		private Transform       m_pDefaultParent;
 
 		/****************************************************************************************
 		 * Physics aliases
 		 ***************************************************************************************/
-		//private Rigidbody       m_pRigidBody;
+		private bool			m_bHasGravityEnabledByDefault;
 		public	bool			HasPhysics()						{ return GetPhysics() != null; }
 		public	Rigidbody		GetPhysics()						{ return obj().GetComponent<Rigidbody>(); }
 		public	void			SetGravityEnabled(bool bEnabled)	{ GetPhysics().useGravity = bEnabled; }
 		public	bool			GetGravityEnabled()					{ return GetPhysics().useGravity; }
-
+		public	void			SetGravityEnabledByDefault(bool bEnabled) { m_bHasGravityEnabledByDefault = bEnabled; }
 
 		/****************************************************************************************
 		 * Health functionality
@@ -173,6 +207,7 @@ namespace Assets {
 		private	void	CalculateNextRespawnTime() { m_flNextRespawnTime = g.curtime + 10.0f; }
 
 		public	virtual void	Respawn() {
+
 			m_flLastRespawnTime = g.curtime;
 			obj().SetActive(true);
 
@@ -188,26 +223,37 @@ namespace Assets {
 
 			//reset health
 			m_iHealth = m_iSpawnHealth;
+
+			//reset gravity enabled
+			if (HasPhysics()) SetGravityEnabled(m_bHasGravityEnabledByDefault);
+
+			//reset parent to default
+			GetTransform().parent = m_pDefaultParent;
+
+			InitControllerInputs();
 		}
 
 		/****************************************************************************************
 		 * MonoBehavior overrides
 		 ***************************************************************************************/
-		
 
 		// Use this for initialization
 		public virtual void		Start() {
 			g.CheckForReinitializationOnStart();
 			g_aEntList.Add(this);
 
-			//m_pRigidBody = obj().GetComponent<Rigidbody>();
+			m_pAudioSource = obj().AddComponent<AudioSource>();
 
 			//Remember default spawn values
 			m_iSpawnFlags		= m_iFlags;
 			m_vSpawnLocation	= obj().transform.position;
 			m_qSpawnAngle		= obj().transform.rotation;
+			if (HasPhysics()) m_bHasGravityEnabledByDefault = GetGravityEnabled();
+			m_pDefaultParent	= GetTransform().parent;
 			Respawn();
 		}
+
+		public virtual void		Awake() { }
 
 		public virtual void		OnDestroy() {
 			g_aEntList.Remove(this);
@@ -222,7 +268,13 @@ namespace Assets {
 				else
 					Respawn();
 			}
-				
+
+			//This is so that picked up objects stop moving/rotating
+			//after colliding with a static kinematic object
+			if (m_bIsPickedUp) {
+				SetAbsVelocity(Vector3.zero);
+				SetAngVelocity(Vector3.zero);
+			}
 		}
 
 		/**
@@ -230,6 +282,7 @@ namespace Assets {
 		 */ 
 		public virtual void		OnApplicationQuit() {
 			g.MarkForReinitializationOnNextStart();
+			
 		}
 
 		//These are called when enabled or disabled

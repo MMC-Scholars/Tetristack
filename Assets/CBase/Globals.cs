@@ -16,7 +16,7 @@ using System.Diagnostics;
 using UnityEngine;
 
 namespace Assets {
-	abstract partial class g {
+	public abstract partial class g {
 		public	static float	curtime,
 								prevtime,
 								frametime;
@@ -44,6 +44,8 @@ namespace Assets {
 				init();
 				bReInitialized = true;
 				CBaseEntity.g_aEntList = new List<CBaseEntity>();
+				g.RightController().RemoveAllLinkedEntityInputs();
+				g.LeftController().RemoveAllLinkedEntityInputs();
 			}
 			return bReInitialized;
 		}
