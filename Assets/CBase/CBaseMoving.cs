@@ -17,7 +17,7 @@ namespace Assets
         public bool bIsWaitingToClose;
 
         //how long object has been moving
-        public float movementTime;
+        //public float movementTime;
 
         //time before moving
         public float waitingTime;
@@ -116,9 +116,9 @@ namespace Assets
             bIsOpening = false;
         }
 
-        void WaitToClose(float deltaTime)
+        void WaitToClose()
         {
-            waitingTime += deltaTime;
+            waitingTime += g.frametime;
             if (g.curtime > waitingTime)
             {
                 Close();
@@ -129,10 +129,10 @@ namespace Assets
         //define in child class
         void SetPosition(float lerp) { } 
 
-        float GetEstimatedTravelTime()
-        {
-            return movementTime;
-        }
+       // float GetEstimatedTravelTime()
+        //{
+         //   return movementTime;
+        //}
 
         bool IsOpening()
         {
@@ -144,6 +144,31 @@ namespace Assets
             return bIsClosing;
         }
  
+        protected virtual void processOpen()
+        { 
+        }
 
+        protected virtual void processClose()
+        {
+
+        }
+
+        private void Update()
+        {
+            base.Update();
+
+            if (bIsOpening)
+            {
+                processOpen();
+            }
+            if (bIsClosing)
+            {
+                processClose();
+            }
+            if (bIsOpen)
+            {
+                WaitToClose();
+            }
+        }
     }
 }
