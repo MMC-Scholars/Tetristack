@@ -15,20 +15,21 @@ namespace Assets {
 		 * Reloads high score from file
 		 ***************************************************************************************/
 		public void reloadFromFile() {
-			if(!File.Exists(s_sFileName))
+			if(!File.Exists(s_sFileName)) {
+				UnityEngine.Debug.Log("High score file missing, creating...\n");
 				writeToFile();
+			}
+				
 
 			FileStream stream = new FileStream(s_sFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-			string str = stream.ToString();
 
-			//copy string, removing non-digits
-			string flt = "";
-			for (int i = 0; i < str.Length; i++) {
-				if (Char.IsDigit(str[i]))
-				flt += str[i];
-			}
+			StreamReader reader = new StreamReader(stream);
 
-			m_flHighScore = float.Parse("0.0", CultureInfo.InvariantCulture);
+			String flt = reader.ReadLine();
+
+			UnityEngine.Debug.Log("Parsing string" + flt);
+			m_flHighScore = float.Parse(flt, CultureInfo.InvariantCulture);
+			reader.Close();
 			stream.Close();
 		}
 

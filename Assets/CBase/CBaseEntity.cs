@@ -128,7 +128,7 @@ namespace Assets {
 			bool bUsed = IsUseable();
 			if (bUsed) {
 				if (m_bUseTogglesPickup && pUser is CBaseController) {
-					if (!m_bIsPickedUp || pUser != GetParent())
+					if (!m_bIsPickedUp || !HasParent() || pUser != GetParent())
 						Pickup(pUser as CBaseController);
 					else
 						Drop(pUser as CBaseController);
@@ -146,6 +146,7 @@ namespace Assets {
 			GetTransform().parent = pParent.GetTransform();
 		}
 		public	CBaseEntity		GetParent() { return g.ToBaseEntity(GetTransform().parent.gameObject); }
+		public  bool			HasParent() { return GetTransform().parent != null; }
 		private Transform       m_pDefaultParent;
 
 		/****************************************************************************************
@@ -212,7 +213,8 @@ namespace Assets {
 			obj().SetActive(true);
 
 			//reset position
-			obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
+			if (!HasFlag(FL_NO_RESPAWN_TELEPORT))
+				obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
 
 			//set velocity
 			if (HasPhysics())
@@ -229,6 +231,10 @@ namespace Assets {
 
 			//reset parent to default
 			GetTransform().parent = m_pDefaultParent;
+
+			if (GetTransform().parent != null) {
+				TeleportTo(GetTransform().parent.position);
+			}
 
 			InitControllerInputs();
 		}
@@ -250,6 +256,9 @@ namespace Assets {
 			m_qSpawnAngle		= obj().transform.rotation;
 			if (HasPhysics()) m_bHasGravityEnabledByDefault = GetGravityEnabled();
 			m_pDefaultParent	= GetTransform().parent;
+
+			AddFlagToChildren(FL_NO_RESPAWN_TELEPORT);
+
 			Respawn();
 		}
 

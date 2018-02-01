@@ -98,29 +98,14 @@ namespace Assets {
 			if (pEnt != null) {
 				pEnt.SetIsTouchedByController(false);
 				m_pColliding.Remove(pEnt);
+				pEnt.ForceDrop(this);
 			}
 		}
 
-		/****************************************************************************************
-		* Grip state makes pickup logic more intuitive and less buggy
-		***************************************************************************************/
-		/*public enum EGripState {
-			EMPTY = 0,
-			WANTS_TO_GRIP,
-			HOLD
-		}
-		EGripState GetGripState() {
-			if (GetTransform().childCount > 0)
-				return EGripState.HOLD;
-			if (m_pColliding.Count > 0)
-				return EGripState.WANTS_TO_GRIP;
-			return EGripState.EMPTY;
-		}*/
+
 		public bool HasObjectPickedUp() {
 			return GetTransform().childCount > 0;
 		}
-
-
 
 		/****************************************************************************************
 		* Because any rigidbody's don't seem to follow the controller at all

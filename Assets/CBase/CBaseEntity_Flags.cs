@@ -43,7 +43,9 @@ namespace Assets {
 							FL_TRIGGERIGNORE        = 1 << 2,	//Should MMC's triggers ignore this entity?
 							FL_IGNORE_USE           = 1 << 3,
 							FL_DESTROY_ON_RESPAWN   = 1 << 4,	//use this for instantiated copies that should be destroyed on restart round
-							FL_ALLOW_PICKUP         = 1 << 5;
+							//FL_ALLOW_PICKUP         = 1 << 5;
+							FL_NO_RESPAWN_TELEPORT  = 1 << 5;
+							
 
 		/**
 		 * Use this to check if an object has a specific flag
@@ -66,6 +68,16 @@ namespace Assets {
 				RemoveFlags(flags);
 			else
 				AddFlags(flags);
+		}
+
+		public void AddFlagToChildren(int iFlag) {
+			for (int i = 0; i < GetTransform().childCount; i++) {
+				CBaseEntity pEnt = g.ToBaseEntity(GetTransform().GetChild(i).gameObject);
+				if (pEnt != null) {
+					pEnt.AddFlags(iFlag);
+					pEnt.AddFlagToChildren(iFlag);
+				}		
+			}
 		}
 	}
 }

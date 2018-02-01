@@ -96,15 +96,17 @@ namespace Assets {
 			}
 			if (bDidMeasure) {
 				//TODO link to displays!
-				string text = String.Format("{0:F2}m", flMeasure);
+				string text = String.Format("{0:F1}m", flMeasure);
 				m_pScoreText.text = text;
 			}
 		}
 
 
 		void UpdateHighScoreHaloHeight() {
-			Debug.DrawLine(new Vector3(0,-10,0),m_pMeasuringStick.CenterBottom(), Color.cyan, 20.0f);
-			m_pHighScoreHalo.transform.position = m_pMeasuringStick.CenterBottom()+new Vector3(0,m_pScores.highScore(),0);
+			Vector3 dest = m_pMeasuringStick.CenterBottom()+new Vector3(0,m_pScores.highScore() - 0.12f,0);
+			if (dest.y < m_pMeasuringStick.CenterBottom().y)
+				dest.y = m_pMeasuringStick.CenterBottom().y;
+			m_pHighScoreHalo.transform.position = dest;
 		}
 
 		//Called whenever a new score is measured

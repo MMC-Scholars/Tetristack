@@ -151,8 +151,13 @@ namespace Assets {
 			}
 		}
 		void Drop(CBaseController pController) {
-			if (GetParent() is CBaseController
+			if (HasParent() &&GetParent() == pController
 				&& !pController.ButtonsPressed().HasButton(g.IN_TRIGGER)) {
+				ForceDrop(pController);
+			}
+		}
+		public void ForceDrop(CBaseController pController) {
+			if (HasParent() && GetParent() == pController && m_bIsPickedUp) {
 				m_bIsPickedUp = false;
 				SetAbsVelocity(pController.GetAbsVelocityManualCalc());
 				GetTransform().SetParent(null);
