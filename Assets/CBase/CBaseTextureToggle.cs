@@ -21,6 +21,7 @@ namespace Assets {
 		}
 
 		public override void Start() {
+			m_bCenterOnParent = true;
 			base.Start();
 			obj().GetComponent<MeshRenderer>().material = m_pStartingMaterial;
 		}

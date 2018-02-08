@@ -39,11 +39,15 @@ namespace Assets {
 		TextMesh            m_pScoreText;
 
 		int                 m_iHandCount = 0; //number of hands in the building area
-
+		float				m_flCurrentHeight;
 		//float               m_flNextBlockDrop = 0.0f;
 		bool                m_bForceBlockDrop = true;
+		
 
 		public AudioClip    m_pRestartRoundSound;
+
+		AudioSource         m_pMusicSource;
+		public AudioClip    m_pGameMusic;
 
 		//High score interface
 		CScoreTable m_pScores = new CScoreTable();
@@ -98,9 +102,16 @@ namespace Assets {
 				//TODO link to displays!
 				string text = String.Format("{0:F1}m", flMeasure);
 				m_pScoreText.text = text;
+				m_flCurrentHeight = flMeasure;
+
+				//calc music pitch
+				float newpitch = 1 + (GetCurrentHeight()- 1.0f) / m_pScores.highScore();
+				if (newpitch < 1) newpitch = 1;
+				m_pMusicSource.pitch = newpitch;
 			}
 		}
 
+		public float GetCurrentHeight() { return m_flCurrentHeight; }
 
 		void UpdateHighScoreHaloHeight() {
 			Vector3 dest = m_pMeasuringStick.CenterBottom()+new Vector3(0,m_pScores.highScore() - 0.12f,0);
@@ -114,7 +125,13 @@ namespace Assets {
 			AdjustPlatformCameraHeight(flScore);
 			if (m_pScores.notifyScore(flScore)) {
 				//new high score reached, do some explosions!
-				UpdateHighScoreHaloHeight();
+				//UpdateHighScoreHaloHeight();
+
+				//just hide ourselves to stop annoying the player
+				m_pHighScoreHalo.SetActive(false);
+
+				//stop the music
+				m_pMusicSource.mute = true;
 			}
 		}
 
@@ -123,18 +140,27 @@ namespace Assets {
 			//m_pPlatform.SetPosition(flScoreHeight / g.TOWER_BUILDER_MAX_HEIGHT);
 		}
 
-		private CBaseBlock CreateBlock() {
+		public CBaseBlock CreateBlock() {
 			CBaseBlock pBlock = m_pBlockSequencer.NextBlock(m_pBlockSequencer.GetTransform().position);
 			pBlock.SetGravityEnabled(false);
+			if (m_pBlockSequencer.NumGenerated() > 1 && m_bDropBlocks) {
+				pBlock.TeleportDisplaced(new Vector3(0, 2, 0));
+				pBlock.m_bMoveDown = true;
+			}
 			return pBlock;
+		}
+
+		public float BlockDownSpeed() {
+			return 0.2f + 0.2f * (GetCurrentHeight() / m_pScores.highScore());
 		}
 
 		//Called when a block enters the "veil" of the building area, usually when held by hand
 		public void OnBlockEnter(CBaseBlock pBlock) {
 			if (!pBlock.m_bHasEnteredBuildingArea) {
-				CreateBlock();
 				pBlock.m_bHasEnteredBuildingArea = true;
 				pBlock.SetGravityEnabledByDefault(true);
+				if (!m_bDropBlocks)
+					CreateBlock();
 			}
 		}
 
@@ -164,31 +190,53 @@ namespace Assets {
 		}
 
 		public override void RestartRound() {
-			g.RightController().RemoveAllLinkedEntityInputs();
-			g.LeftController().RemoveAllLinkedEntityInputs();
-
 			base.RestartRound();
 			m_bForceBlockDrop = true;
 
 			EmitSound(m_pRestartRoundSound);
+
+			m_pMusicSource.pitch = 1;
+			m_pMusicSource.volume = 1;
+		}
+
+		public override void Respawn() {
+			base.Respawn();
+			m_flCurrentHeight = 0.5f;
+
+			Hook_ToggleMusic(g.LeftController());
+			Hook_ToggleMusic(g.RightController());
+			Hook_ToggleBlockDrop(g.LeftController());
+			Hook_ToggleBlockDrop(g.RightController());
+
+
+			m_pMusicSource.mute = m_bMuteStatus;
 		}
 
 		/****************************************************************************************
 		 * Unity overrides
 		 ***************************************************************************************/
 		public override void Start() {
+			//create music player
+			m_pMusicSource = obj().AddComponent<AudioSource>();
+			m_pMusicSource.clip = m_pGameMusic;
+			m_pMusicSource.loop = true;
+			m_pMusicSource.volume = 1.0f;
+			m_pMusicSource.Play();
+			m_bMuteStatus = false;
+
 			base.Start();
 			if (_pBlockSequencer)	m_pBlockSequencer	= _pBlockSequencer.GetComponent<CBlockSequencer>();
 			if (_pMeasuringStick)	m_pMeasuringStick	= _pMeasuringStick.GetComponent<CHeightmapGenerator>();
 			//if (_pPlatform)			m_pPlatform			= _pPlatform.GetComponent<CBaseMoving>();
 			if (_pScoreText)		m_pScoreText		= _pScoreText.GetComponent<TextMesh>();
 
-			
-
-			//m_pPlatform.SetDisplacement(new Vector3(0,0,g.TOWER_BUILDER_MAX_HEIGHT));
 			m_pScores.reloadFromFile();
 			m_pMeasuringStick.init();
 			UpdateHighScoreHaloHeight();
+
+			m_pScoreText.text = String.Format("{0:F1}m", m_pScores.highScore());
+
+			
 		}
 
 		public override void Update() {
@@ -200,6 +248,32 @@ namespace Assets {
 				//m_flNextBlockDrop = g.curtime + 1.0f;
 				CreateBlock();
 			}
+		}
+
+		/****************************************************************************************
+		 * Music toggle function
+		 ***************************************************************************************/
+		private bool m_bMuteStatus = false;
+		public bool ToggleMusic(CBaseEntity pEnt, CBaseController pController) {
+			m_bMuteStatus = !m_bMuteStatus;
+			m_pMusicSource.mute = !m_pMusicSource.mute;
+			return true;
+		}
+
+		private void Hook_ToggleMusic(CBaseController pController) {
+			HookInputFunction(pController, g.IN_A, false, false, ToggleMusic);
+		}
+
+		/****************************************************************************************
+		 * Block drop toggle function
+		 ***************************************************************************************/
+		public bool                m_bDropBlocks = false;
+		public bool ToggleBlockDrop(CBaseEntity pEnt, CBaseController pController) {
+			m_bDropBlocks = !m_bDropBlocks;
+			return true;
+		}
+		private void Hook_ToggleBlockDrop(CBaseController pController) {
+			HookInputFunction(pController, g.IN_B, false, false, ToggleBlockDrop);
 		}
 	}
 }

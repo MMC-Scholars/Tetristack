@@ -23,6 +23,8 @@ namespace Assets {
 		public AudioClip m_pPickupSound;
 		public AudioClip m_pDroppedSound;
 
+		public bool m_bMoveDown = false;
+
 		/**
 		 * Counts the total number of blocks in the game.
 		 */ 
@@ -64,11 +66,23 @@ namespace Assets {
 				SetAbsVelocity(Vector3.zero);
 				SetAngVelocity(Vector3.zero);
 			}
+			if (m_bMoveDown) {
+				Vector3 pos = GetAbsOrigin();
+				pos.y -= g.frametime * g.TowerBuilderRules().BlockDownSpeed();
+				TeleportTo(pos);
+			}
 		}
 
+		bool m_bHasGeneratedBlock = false;
 		public override void OnPickedUp(CBaseController pController) {
 			base.OnPickedUp(pController);
+			m_bMoveDown = false;
 			EmitSound(m_pPickupSound);
+			if (g.TowerBuilderRules().m_bDropBlocks && !m_bHasGeneratedBlock) {
+				m_bHasGeneratedBlock = true;
+				g.TowerBuilderRules().CreateBlock();
+			}
+				
 		}
 
 		public override void OnDropped(CBaseController pController) {

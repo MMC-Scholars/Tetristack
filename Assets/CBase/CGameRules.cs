@@ -44,6 +44,9 @@ namespace Assets {
 		 */ 
 		float m_flLastRoundRestart = 0.0f;
 		public virtual void RestartRound() {
+			g.RightController().RemoveAllLinkedEntityInputs();
+			g.LeftController().RemoveAllLinkedEntityInputs();
+
 			m_flLastRoundRestart = g.curtime;
 			ReloadAllEntities();
 		}

@@ -27,7 +27,6 @@ namespace Assets {
 
 			String flt = reader.ReadLine();
 
-			UnityEngine.Debug.Log("Parsing string" + flt);
 			m_flHighScore = float.Parse(flt, CultureInfo.InvariantCulture);
 			reader.Close();
 			stream.Close();

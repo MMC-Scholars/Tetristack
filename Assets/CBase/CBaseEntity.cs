@@ -107,6 +107,7 @@ namespace Assets {
 		/****************************************************************************************
 		 * Visibility functionality
 		 ***************************************************************************************/
+		public  bool    m_bHideOnSpawn = false;	
 		public	bool	CanSee(CBaseEntity pEnt) {
 			return Physics.Raycast(GetPosition(), pEnt.GetPosition() - GetPosition());
 		}
@@ -148,6 +149,7 @@ namespace Assets {
 		public	CBaseEntity		GetParent() { return g.ToBaseEntity(GetTransform().parent.gameObject); }
 		public  bool			HasParent() { return GetTransform().parent != null; }
 		private Transform       m_pDefaultParent;
+		public  bool			m_bCenterOnParent = false;
 
 		/****************************************************************************************
 		 * Physics aliases
@@ -212,6 +214,9 @@ namespace Assets {
 			m_flLastRespawnTime = g.curtime;
 			obj().SetActive(true);
 
+			if (GetComponent<Renderer>() != null)
+				GetComponent<Renderer>().enabled = !m_bHideOnSpawn;
+
 			//reset position
 			if (!HasFlag(FL_NO_RESPAWN_TELEPORT))
 				obj().transform.SetPositionAndRotation(m_vSpawnLocation,m_qSpawnAngle);
@@ -232,7 +237,7 @@ namespace Assets {
 			//reset parent to default
 			GetTransform().parent = m_pDefaultParent;
 
-			if (GetTransform().parent != null) {
+			if (GetTransform().parent != null && m_bCenterOnParent) {
 				TeleportTo(GetTransform().parent.position);
 			}
 

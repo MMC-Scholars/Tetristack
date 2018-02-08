@@ -29,6 +29,8 @@ namespace Assets {
 
 		Queue<CBaseBlock>   m_qBlocks; //current queue of blocks to duplicate
 
+		int m_iNumGeneratedBlocks = 0;
+		public int NumGenerated() { return m_iNumGeneratedBlocks; }
 
 		/**
 		 * Because C#'s list interface is apparantly void of functionality
@@ -76,9 +78,10 @@ namespace Assets {
 				m_qBlocks = NextTetrisPieceSequence();
 			}
 			CBaseBlock source = m_qBlocks.Dequeue();
-			CBaseBlock blk = g.ToBaseBlock(Instantiate(source.obj(), pos, obj().transform.rotation));
-			
+			CBaseBlock blk = g.ToBaseBlock(Instantiate(source.obj(), pos, obj().transform.rotation));	
 			blk.m_pSource = source;
+
+			m_iNumGeneratedBlocks++;
 			return blk;
 		}
 
@@ -92,6 +95,11 @@ namespace Assets {
 			T = g.ToBaseBlock(m_pT);
 			L = g.ToBaseBlock(m_pL);
 			S = g.ToBaseBlock(m_pS);
+		}
+
+		public override void Respawn() {
+			base.Respawn();
+			m_iNumGeneratedBlocks = 0;
 		}
 	}
 }	

@@ -153,7 +153,7 @@ namespace Assets
 
         }
 
-        private void Update()
+        public override void Update()
         {
             base.Update();
 

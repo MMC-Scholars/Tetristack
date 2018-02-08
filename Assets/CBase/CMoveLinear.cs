@@ -14,23 +14,24 @@ namespace Assets
 
         protected override void processOpen()
         {
-            float currentHeight = g.TowerBuilderRules().getCurrentHeight();
+			//don't move if the grab buttons are pressed
+			if (g.RightController().ButtonsPressed().HasButton(g.IN_TRIGGER)
+				|| g.LeftController().ButtonsPressed().HasButton(g.IN_TRIGGER))
+				return;
+
+            float currentHeight = g.TowerBuilderRules().GetCurrentHeight();
             Vector3 idealLocation = spawnLocation + new Vector3(0, currentHeight, 0);
             Vector3 displacement = idealLocation - GetAbsOrigin();
             
             displacement *= movementSpeed;
             TeleportTo(displacement + GetAbsOrigin());
-
         }
 
-        private void Start()
+        public override void Start()
         {
-            
             base.Start();
             bIsOpening = true;
-            spawnLocation = GetAbsOrigin();
-
-
+			spawnLocation = GetAbsOrigin();
         }
     }
 }

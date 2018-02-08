@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Valve.VR;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 
 namespace Assets {
 
