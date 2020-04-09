@@ -1,1 +1,3 @@
-# Unity-Interfaced-Template
+# Tetristack
+
+A 3D virtual reality Tetris stacking game
